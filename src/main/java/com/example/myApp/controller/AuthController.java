@@ -1,26 +1,57 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.login.AuthResponse;
+import com.example.myApp.dto.login.LoginRequest;
+import com.example.myApp.dto.login.RegisterRequest;
+import com.example.myApp.dto.login.UserDTO;
 import com.example.myApp.enity.User;
+import com.example.myApp.security.JwtTokenProvider;
 import com.example.myApp.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
+//    Dang nhap tai khoan
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String fullname, @RequestParam String password){
-        User user = userService.findByFullname(fullname).orElse(null);
-        if (user != null && password.equals(user.getPassword())){
-            return ResponseEntity.ok("Đăng nhập thành công");
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            boolean isAuthenticated = userService.authenticate(request.getEmail(), request.getPassword());
+            if (isAuthenticated) {
+                String token = jwtTokenProvider.generateToken(request.getEmail());
+                return ResponseEntity.ok(new AuthResponse(token));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai tài khoản hoặc mật khẩu");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống: " + e.getMessage());
         }
-        return ResponseEntity.status(401).body("Sai tài khoản hoặc mật khẩu");
+    }
+//    Dang kí tai khoan
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest request){
+        try{
+            userService.registerUser(request);
+            return ResponseEntity.ok("Register successfully");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

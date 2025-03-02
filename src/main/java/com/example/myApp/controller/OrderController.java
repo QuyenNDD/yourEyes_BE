@@ -17,6 +17,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+//    Lay don hang cua mot nguoi
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Order>> getOrderByUserId(@PathVariable int userId){
         List<Order> orders = orderService.findOrderByUserId(userId);

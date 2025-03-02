@@ -18,19 +18,25 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(nullable = false)
     private String fullname;
+
     @Column(nullable = false)
     private String email;
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false)
     private String phone;
+
     @Column(nullable = false)
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
+//    @JoinColumn(name = "role_id", nullable = false)
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @Column(name = "created_at")
