@@ -7,11 +7,13 @@ import com.example.myApp.repository.CartRepository;
 import com.example.myApp.repository.ProductRepository;
 import com.example.myApp.repository.UserRepository;
 import com.example.myApp.service.CartService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +44,35 @@ public class CartServiceImpl implements CartService {
                     .createdAt(LocalDateTime.now())
                     .build();
             cartRepository.save(newCart);
+        }
+    }
+
+    @Override
+    public void removeFromCart(String email, int productId){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng"));
+        Products products = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Không tìm thấy sản phẩm"));
+        Cart cart = cartRepository.findByUserAndProduct(user, products).orElseThrow(() -> new EntityNotFoundException("Không tìm thấy sản phẩm trong giỏ hàng"));
+        cartRepository.delete(cart);
+    }
+
+    @Override
+    public List<Cart> getCartByUser(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng"));
+        return cartRepository.findByUser(user);
+    }
+
+    @Override
+    public void updateCart(String email, int productId, int newQuantity){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng"));
+        Products products = productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Không tìm thấy sản phẩm"));
+        Cart cartItems = cartRepository.findByUserAndProduct(user, products).orElseThrow(() -> new EntityNotFoundException("Không tìm thấy sản phẩm trong giỏ hàng"));
+
+        if (newQuantity > 0){
+            cartItems.setQuantity(newQuantity);
+            cartRepository.save(cartItems);
+        }else {
+            cartRepository.delete(cartItems);
         }
     }
 }

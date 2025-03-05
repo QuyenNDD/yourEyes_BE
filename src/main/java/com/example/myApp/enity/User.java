@@ -22,7 +22,7 @@ public class User {
     @Column(nullable = false)
     private String fullname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -36,7 +36,7 @@ public class User {
 
     @ManyToOne
 //    @JoinColumn(name = "role_id", nullable = false)
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @Column(name = "created_at")
