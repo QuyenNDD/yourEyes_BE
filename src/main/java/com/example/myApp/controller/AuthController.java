@@ -1,5 +1,6 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.UserUpdateRequest;
 import com.example.myApp.dto.login.AuthResponse;
 import com.example.myApp.dto.login.LoginRequest;
 import com.example.myApp.dto.login.RegisterRequest;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
 
@@ -61,5 +63,20 @@ public class AuthController {
         }catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserDTO> getUserProfile(Principal principal){
+        String email = principal.getName();
+        UserDTO userDTO = userService.getUserProfile(email);
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<String> updateUserProfile(@Valid @RequestBody UserUpdateRequest userUpdateRequest,
+                                                    Principal principal){
+        String email = principal.getName();
+        userService.updateUserProfile(email, userUpdateRequest);
+        return ResponseEntity.ok("Update successfully");
     }
 }

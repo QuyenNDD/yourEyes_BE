@@ -1,19 +1,21 @@
 package com.example.myApp.service.serviceImpl;
 
+import com.example.myApp.dto.UserUpdateRequest;
 import com.example.myApp.dto.login.RegisterRequest;
+import com.example.myApp.dto.login.UserDTO;
 import com.example.myApp.enity.Role;
 import com.example.myApp.enity.User;
 import com.example.myApp.repository.RoleRepository;
 import com.example.myApp.repository.UserRepository;
 import com.example.myApp.service.UserService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -62,5 +64,23 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("Sai tài khoản hoặc mật khẩu");
         }
         return true;
+    }
+
+    @Override
+    public UserDTO getUserProfile(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        return new UserDTO(user);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserProfile(String email, UserUpdateRequest userUpdateRequest){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setFullname(userUpdateRequest.getFullname());
+        user.setPhone(userUpdateRequest.getPhone());
+        user.setAddress(userUpdateRequest.getAddress());
+
+        userRepository.save(user);
     }
 }
