@@ -39,7 +39,6 @@ public class SecurityConfig {
                         .anyRequest().permitAll() // Các API khác yêu cầu đăng nhập
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Thêm JWT Filter trước UsernamePasswordAuthenticationFilter
-
         return httpSecurity.build();
     }
     @Bean

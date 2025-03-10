@@ -1,5 +1,6 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.ProductResponse;
 import com.example.myApp.enity.Products;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ public class ProductController {
     private ProductService productService;
 
     //Lay tat ca san pham
+    @GetMapping("/getAll")
     public ResponseEntity<Page<Products>> getAllProducts(@RequestParam(defaultValue = "0") int page,
                                                          @RequestParam(defaultValue = "10") int size){
         Page<Products> products = productService.getAllProducts(page, size);
@@ -23,8 +25,8 @@ public class ProductController {
     }
     // Lay san pham bang Id
     @GetMapping("/{id}")
-    public ResponseEntity<Products> getProductById(@PathVariable Integer id){
-        Products products = productService.getProductById(id);
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable int id){
+        ProductResponse products = productService.getProductById(id);
         return (products != null) ? ResponseEntity.ok(products) : ResponseEntity.notFound().build();
     }
 

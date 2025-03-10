@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already exists!");
         }
 
-        Role userRole = roleRepository.findByName("user").
+        Role userRole = roleRepository.findByName("USER").
                 orElseThrow(() -> new RuntimeException("Role không tồn tại"));
 
         User user = User.builder()

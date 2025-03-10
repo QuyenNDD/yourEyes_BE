@@ -1,5 +1,6 @@
 package com.example.myApp.service.serviceImpl;
 
+import com.example.myApp.dto.ProductResponse;
 import com.example.myApp.enity.Products;
 import com.example.myApp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Products getProductById(Integer id) {
-        return productRepository.findById(id).orElse(null);
+    public ProductResponse getProductById(int id) {
+        Products products = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        return new ProductResponse(
+                products.getId(),
+                products.getName(),
+                products.getDescription(),
+                products.getStock(),
+                products.getPrice(),
+                products.getCategoryId().getName(),
+                products.getImageUrl()
+        );
     }
 
     @Override
