@@ -1,5 +1,7 @@
 package com.example.myApp.enity;
 
+import com.example.myApp.dto.ProductDTO;
+import com.example.myApp.repository.CategoryRepository;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,4 +39,16 @@ public class Products {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public void updateFromDTO(ProductDTO productDTO,
+                              CategoryRepository categoryRepository) {
+        this.name = productDTO.getName();
+        this.description = productDTO.getDescription();
+        this.price = productDTO.getPrice();
+        this.imageUrl = productDTO.getImageUrl();
+
+        // Tìm category theo tên và cập nhật
+        this.categoryId = categoryRepository.findByName(productDTO.getCategory())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+    }
 }

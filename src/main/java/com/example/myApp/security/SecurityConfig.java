@@ -34,8 +34,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF vì dùng JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Không dùng session
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/products/**").permitAll() // API công khai
-                        .requestMatchers("/api/cart/**").authenticated()
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/products/getAll", "/api/products/{id}", "api/products/search").permitAll() // API công khai
+                        .requestMatchers("/api/products/add", "/api/products/update/{id}", "/api/products/delete/{id}").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/api/cart/**", "/api/auth/profile").authenticated()
                         .anyRequest().permitAll() // Các API khác yêu cầu đăng nhập
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Thêm JWT Filter trước UsernamePasswordAuthenticationFilter
