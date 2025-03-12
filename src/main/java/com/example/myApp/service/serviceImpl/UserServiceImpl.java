@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .fullname(request.getFullname())
                 .email(request.getEmail())
-                .password(bCryptPasswordEncoder.encode(request.getPassword())) // ✅ Mã hóa mật khẩu
+                .password(bCryptPasswordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .address(request.getAddress())
                 .role(userRole) // Nếu có role

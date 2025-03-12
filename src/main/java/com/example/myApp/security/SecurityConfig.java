@@ -3,8 +3,10 @@ package com.example.myApp.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+@EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -34,10 +37,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF vì dùng JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Không dùng session
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/products/getAll", "/api/products/{id}", "api/products/search").permitAll() // API công khai
-                        .requestMatchers("/api/products/add", "/api/products/update/{id}", "/api/products/delete/{id}").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/products/getAll", "/api/products/{id}", "/api/products/search").permitAll()
+                        .requestMatchers("/api/products/update/{id}", "/api/products/delete/{id}").hasRole("ADMIN")
+                        .requestMatchers("/api/products/add").hasRole("ADMIN") // Kiểm tra lại dòng này
                         .requestMatchers("/api/cart/**", "/api/auth/profile").authenticated()
-                        .anyRequest().permitAll() // Các API khác yêu cầu đăng nhập
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Thêm JWT Filter trước UsernamePasswordAuthenticationFilter
         return httpSecurity.build();

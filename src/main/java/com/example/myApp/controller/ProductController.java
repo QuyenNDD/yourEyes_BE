@@ -8,6 +8,7 @@ import com.example.myApp.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.myApp.service.ProductService;
 
@@ -48,6 +49,7 @@ public class ProductController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addProducts(@RequestBody ProductDTO productDTO){
         try {
             Products products = productService.addProducts(productDTO);
