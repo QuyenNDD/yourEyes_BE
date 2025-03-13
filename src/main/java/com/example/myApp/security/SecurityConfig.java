@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/products/getAll", "/api/products/{id}", "/api/products/search").permitAll()
                         .requestMatchers("/api/products/update/{id}", "/api/products/delete/{id}").hasRole("ADMIN")
                         .requestMatchers("/api/products/add").hasRole("ADMIN") // Kiểm tra lại dòng này
+                        .requestMatchers("/api/discount/add").hasRole("ADMIN")
+                        .requestMatchers("/api/user/getAll").hasRole("ADMIN")
                         .requestMatchers("/api/cart/**", "/api/auth/profile").authenticated()
                         .anyRequest().permitAll()
                 )

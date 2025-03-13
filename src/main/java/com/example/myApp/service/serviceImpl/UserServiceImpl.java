@@ -17,7 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,5 +84,13 @@ public class UserServiceImpl implements UserService {
         user.setAddress(userUpdateRequest.getAddress());
 
         userRepository.save(user);
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAllByOrderByIdAsc()
+                .stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
     }
 }

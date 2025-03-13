@@ -5,6 +5,7 @@ import com.example.myApp.dto.login.RegisterRequest;
 import com.example.myApp.dto.login.UserDTO;
 import com.example.myApp.enity.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -13,4 +14,5 @@ public interface UserService {
     boolean authenticate(String email, String password);
     UserDTO getUserProfile(String email);
     void updateUserProfile(String email, UserUpdateRequest userUpdateRequest);
+    List<UserDTO> getAllUsers();
 }

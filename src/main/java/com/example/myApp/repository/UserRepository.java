@@ -4,11 +4,12 @@ import com.example.myApp.enity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail (String email);
-    Optional<User> findByFullname (String fullname);
+    List<User> findAllByOrderByIdAsc();
     boolean existsByEmail(String email);
 }
