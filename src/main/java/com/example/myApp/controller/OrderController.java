@@ -1,14 +1,13 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.OrderResponse;
 import com.example.myApp.enity.Order;
 import com.example.myApp.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,5 +24,13 @@ public class OrderController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(orders);
+    }
+
+    @PostMapping("/place")
+    public ResponseEntity<?> placeOrder(@RequestParam(required = false) String discountCode,
+                                        Principal principal) {
+        String userEmail = principal.getName(); // Lấy email từ token
+        OrderResponse response = orderService.placeOrder(userEmail, discountCode);
+        return ResponseEntity.ok(response);
     }
 }

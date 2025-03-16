@@ -1,13 +1,17 @@
 package com.example.myApp.service.serviceImpl;
 
+import com.example.myApp.dto.DiscountDTO;
 import com.example.myApp.dto.DiscountRequest;
 import com.example.myApp.enity.Discount;
 import com.example.myApp.repository.DiscountRepository;
 import com.example.myApp.service.DiscountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +19,12 @@ public class DiscountServiceImpl implements DiscountService {
     private final DiscountRepository discountRepository;
 
     @Override
-    public List<Discount> getAllDiscount(){
-        return discountRepository.findAll();
+    public List<DiscountDTO> getAvailableDiscounts(){
+        LocalDate today = LocalDate.now();
+        return discountRepository.findAll().stream()
+                .filter(discount -> !today.isBefore(discount.getStartDate()) && !today.isAfter(discount.getEndDate()))
+                .map(DiscountDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override

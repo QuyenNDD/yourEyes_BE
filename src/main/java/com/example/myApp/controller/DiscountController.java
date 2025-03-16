@@ -1,5 +1,6 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.DiscountDTO;
 import com.example.myApp.dto.DiscountRequest;
 import com.example.myApp.enity.Discount;
 import com.example.myApp.service.DiscountService;
@@ -16,9 +17,10 @@ public class DiscountController {
     @Autowired
     private DiscountService discountService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Discount>> getAll(){
-        return ResponseEntity.ok(discountService.getAllDiscount());
+    @GetMapping("/available")
+    public ResponseEntity<List<DiscountDTO>> getAvailableDiscounts(){
+        List<DiscountDTO> discounts = discountService.getAvailableDiscounts();
+        return ResponseEntity.ok(discounts);
     }
 
     @PostMapping("/add")

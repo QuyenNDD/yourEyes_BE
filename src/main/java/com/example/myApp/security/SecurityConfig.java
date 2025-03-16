@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/products/add").hasRole("ADMIN") // Kiểm tra lại dòng này
                         .requestMatchers("/api/discount/add").hasRole("ADMIN")
                         .requestMatchers("/api/user/getAll").hasRole("ADMIN")
-                        .requestMatchers("/api/cart/**", "/api/auth/profile").authenticated()
+                        .requestMatchers("/api/cart/**", "/api/auth/profile", "/api/order/place").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Thêm JWT Filter trước UsernamePasswordAuthenticationFilter

@@ -25,6 +25,9 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addToCart(String email, int productId, int quantity){
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Số lượng phải lớn hơn 0!");
+        }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
