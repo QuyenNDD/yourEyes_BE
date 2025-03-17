@@ -1,5 +1,6 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
 import com.example.myApp.dto.ProductResponse;
 import com.example.myApp.enity.Products;
@@ -74,5 +75,11 @@ public class ProductController {
     public ResponseEntity<String> deleteProducts(@PathVariable int id){
         productService.deleteProduct(id);
         return ResponseEntity.ok("Delete success");
+    }
+
+    @GetMapping("/{productId}/available")
+    public ResponseEntity<ProductAvailableResponse> checkProductAvailable(@PathVariable int productId){
+        ProductAvailableResponse productAvailableResponse = productService.checkProductAvailable(productId);
+        return ResponseEntity.ok(productAvailableResponse);
     }
 }

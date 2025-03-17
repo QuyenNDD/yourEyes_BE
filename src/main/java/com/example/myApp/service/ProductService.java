@@ -1,5 +1,6 @@
 package com.example.myApp.service;
 
+import com.example.myApp.dto.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
 import com.example.myApp.dto.ProductResponse;
 import com.example.myApp.enity.Products;
@@ -13,5 +14,6 @@ public interface ProductService {
     Page<Products> searchProductByName(String name, int page, int size);
     Products addProducts(ProductDTO productDTO);
     void deleteProduct(int id);
+    ProductAvailableResponse checkProductAvailable(int id);
 }
 
