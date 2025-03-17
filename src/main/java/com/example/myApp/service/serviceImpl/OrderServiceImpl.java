@@ -1,14 +1,11 @@
 package com.example.myApp.service.serviceImpl;
 
+import com.example.myApp.dto.OrderDetailResponse;
+import com.example.myApp.dto.OrderHistoryResponse;
+import com.example.myApp.dto.OrderProductResponse;
 import com.example.myApp.dto.OrderResponse;
-import com.example.myApp.enity.Cart;
-import com.example.myApp.enity.Discount;
-import com.example.myApp.enity.Order;
-import com.example.myApp.enity.User;
-import com.example.myApp.repository.CartRepository;
-import com.example.myApp.repository.DiscountRepository;
-import com.example.myApp.repository.OrderRepository;
-import com.example.myApp.repository.UserRepository;
+import com.example.myApp.enity.*;
+import com.example.myApp.repository.*;
 import com.example.myApp.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -28,6 +27,8 @@ public class OrderServiceImpl implements OrderService {
     private CartRepository cartRepository;
     @Autowired
     private DiscountRepository discountRepository;
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     @Override
     public List<Order> findOrderByUserId(Integer id){
@@ -61,5 +62,49 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(order);
 
         return new OrderResponse(savedOrder);
+    }
+
+    @Override
+    public List<OrderHistoryResponse> getOrderHistory(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại!"));
+        List<Order> orders = orderRepository.findByUserOrderByCreatedAtDesc(user);
+
+        return orders.stream().map(order -> {
+            Map<Integer, Integer> products = orderDetailRepository.findByOrder(order)
+                    .stream()
+                    .collect(Collectors.toMap(
+                            orderDetail -> orderDetail.getProducts().getId(), // 🛑 Lấy productId
+                            OrderDetail::getQuantity         // 🛑 Lấy số lượng
+                    ));
+
+            return new OrderHistoryResponse(order.getId(), order.getStatus(), order.getCreatedAt(),
+                    order.getFinalPrice(), products);
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDetailResponse getOrderDetail(int orderId, String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại!"));
+
+
+        Order order = orderRepository.findById(orderId)
+           .orElseThrow(() -> new RuntimeException("Order không tồn tại!"));
+
+        if (!order.getUser().equals(user)) {
+            throw new RuntimeException("Bạn không có quyền xem đơn hàng này!");
+        }
+
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
+        List<OrderProductResponse> products = orderDetails.stream().map(detail ->
+                new OrderProductResponse(
+                        detail.getProducts().getId(),
+                        detail.getProducts().getName(),
+                        detail.getQuantity(),
+                        detail.getPrice()
+                )
+        ).collect(Collectors.toList());
+        return new OrderDetailResponse(order.getId(), order.getFinalPrice(), order.getStatus(), products);
     }
 }
