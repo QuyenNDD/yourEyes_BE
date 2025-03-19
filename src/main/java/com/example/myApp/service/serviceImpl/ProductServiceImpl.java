@@ -3,11 +3,9 @@ package com.example.myApp.service.serviceImpl;
 import com.example.myApp.dto.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
 import com.example.myApp.dto.ProductResponse;
-import com.example.myApp.enity.Category;
-import com.example.myApp.enity.Inventory;
-import com.example.myApp.enity.Products;
-import com.example.myApp.repository.CategoryRepository;
-import com.example.myApp.repository.InventoryRepository;
+import com.example.myApp.enity.*;
+import com.example.myApp.enums.OrderStatus;
+import com.example.myApp.repository.*;
 import com.example.myApp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import com.example.myApp.repository.ProductRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +26,10 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
     @Autowired
     private InventoryRepository inventoryRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public Page<Products> getAllProducts(int page, int size) {

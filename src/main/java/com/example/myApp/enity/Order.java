@@ -1,5 +1,7 @@
 package com.example.myApp.enity;
 
+import com.example.myApp.converter.OrderStatusConverter;
+import com.example.myApp.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,8 +29,9 @@ public class Order {
     @Column(name = "total_price", nullable = false,  precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
+    @Convert(converter = OrderStatusConverter.class)
     @Column(name = "status", length = 50)
-    private String status;
+    private OrderStatus status;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

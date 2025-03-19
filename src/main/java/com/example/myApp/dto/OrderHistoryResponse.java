@@ -1,5 +1,6 @@
 package com.example.myApp.dto;
 
+import com.example.myApp.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class OrderHistoryResponse {
     private int orderId;
-    private String status;
+    private OrderStatus status;
     private LocalDateTime createdAt;
     private BigDecimal finalPrice;
     private Map<Integer, Integer> products;

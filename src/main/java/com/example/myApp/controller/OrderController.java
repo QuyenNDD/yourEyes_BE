@@ -4,7 +4,10 @@ import com.example.myApp.dto.OrderDetailResponse;
 import com.example.myApp.dto.OrderHistoryResponse;
 import com.example.myApp.dto.OrderResponse;
 import com.example.myApp.enity.Order;
+import com.example.myApp.enums.OrderStatus;
+import com.example.myApp.repository.OrderRepository;
 import com.example.myApp.service.OrderService;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,8 @@ import java.util.List;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderRepository orderRepository;
 
 //    Lay don hang cua mot nguoi
     @GetMapping("/user/{userId}")
@@ -27,7 +32,6 @@ public class OrderController {
         }
         return ResponseEntity.ok(orders);
     }
-
     @PostMapping("/place")
     public ResponseEntity<?> placeOrder(@RequestParam(required = false) String discountCode,
                                         Principal principal) {
@@ -49,5 +53,27 @@ public class OrderController {
         String email = principal.getName();
         OrderDetailResponse orderDetailResponse = orderService.getOrderDetail(orderId,email);
         return ResponseEntity.ok(orderDetailResponse);
+    }
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable int orderId,
+                                                @RequestParam OrderStatus newStatus,
+                                                Principal principal) {
+        try {
+            Order updateOrder = orderService.updateOrderStatus(orderId, newStatus, principal.getName());
+            return ResponseEntity.ok(updateOrder);
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping
+    public ResponseEntity<List<Order>> getOrdersByStatus(@RequestParam OrderStatus status) {
+        List<Order> orders = orderService.findOrderByStatus(status);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Order>> getAllOrders() {
+        List<Order> orders = orderRepository.findAll();
+        return ResponseEntity.ok(orders);
     }
 }

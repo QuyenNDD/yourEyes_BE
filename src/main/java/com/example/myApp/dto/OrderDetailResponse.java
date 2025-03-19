@@ -1,5 +1,6 @@
 package com.example.myApp.dto;
 
+import com.example.myApp.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,6 @@ import java.util.List;
 public class OrderDetailResponse {
     private int orderId;
     private BigDecimal finalPrice;
-    private String status;
+    private OrderStatus status;
     private List<OrderProductResponse> products;
 }

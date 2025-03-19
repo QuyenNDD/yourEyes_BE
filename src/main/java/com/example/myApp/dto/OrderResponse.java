@@ -1,6 +1,7 @@
 package com.example.myApp.dto;
 
 import com.example.myApp.enity.Order;
+import com.example.myApp.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OrderResponse {
     private int orderId;
-    private String status;
+    private OrderStatus status;
     private LocalDateTime createdAt;
     private String discountCode;
     private BigDecimal discountPercentage;

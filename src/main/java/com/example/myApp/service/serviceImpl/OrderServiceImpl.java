@@ -5,6 +5,7 @@ import com.example.myApp.dto.OrderHistoryResponse;
 import com.example.myApp.dto.OrderProductResponse;
 import com.example.myApp.dto.OrderResponse;
 import com.example.myApp.enity.*;
+import com.example.myApp.enums.OrderStatus;
 import com.example.myApp.repository.*;
 import com.example.myApp.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .user(user)
                 .discount(discount)
-                .status("pending")
+                .status(OrderStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -106,5 +107,22 @@ public class OrderServiceImpl implements OrderService {
                 )
         ).collect(Collectors.toList());
         return new OrderDetailResponse(order.getId(), order.getFinalPrice(), order.getStatus(), products);
+    }
+    @Override
+    public Order updateOrderStatus(int id, OrderStatus newStatus, String email){
+        User employee = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        if (!employee.getRole().getName().equals("EMPLOYEE") && !employee.getRole().getName().equals("ADMIN")) {
+            throw new RuntimeException("Employee does not have permission to update status");
+        }
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setStatus(newStatus);
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public List<Order> findOrderByStatus(OrderStatus status){
+        return orderRepository.findByStatus(status);
     }
 }
