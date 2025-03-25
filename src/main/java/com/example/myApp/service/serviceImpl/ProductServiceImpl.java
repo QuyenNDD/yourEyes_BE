@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -88,5 +89,10 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("Inventory not found"));
         boolean available = inventory.getStockQuantity() > 0;
         return new ProductAvailableResponse(productId, inventory.getStockQuantity());
+    }
+
+    @Override
+    public List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice) {
+        return productRepository.findByFilters(categoryId, minPrice, maxPrice);
     }
 }

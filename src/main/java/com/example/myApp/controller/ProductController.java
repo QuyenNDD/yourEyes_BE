@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.myApp.service.ProductService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -81,5 +82,15 @@ public class ProductController {
     public ResponseEntity<ProductAvailableResponse> checkProductAvailable(@PathVariable int productId){
         ProductAvailableResponse productAvailableResponse = productService.checkProductAvailable(productId);
         return ResponseEntity.ok(productAvailableResponse);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Products>> filterProducts(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+
+        List<Products> products = productService.filterProducts(categoryId, minPrice, maxPrice);
+        return ResponseEntity.ok(products);
     }
 }
