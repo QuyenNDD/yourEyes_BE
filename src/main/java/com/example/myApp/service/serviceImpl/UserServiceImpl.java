@@ -1,5 +1,6 @@
 package com.example.myApp.service.serviceImpl;
 
+import com.example.myApp.dto.ForgetPasswordRequest;
 import com.example.myApp.dto.UserUpdateRequest;
 import com.example.myApp.dto.login.RegisterRequest;
 import com.example.myApp.dto.login.UserDTO;
@@ -92,5 +93,19 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(UserDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String resetPassword(ForgetPasswordRequest request){
+        if (request.getNewPassword() == null || request.getNewPassword().trim().isEmpty()) {
+            throw new RuntimeException("Mật khẩu mới không được để trống!");
+        }
+        User user = userRepository.findByEmailAndPhone(request.getEmail(), request.getPhone())
+                .orElseThrow(() -> new RuntimeException("Email hoặc số điện thoại không chính xác!"));
+
+        user.setPassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
+        return "Mật khẩu đã được đặt lại thành công!";
     }
 }

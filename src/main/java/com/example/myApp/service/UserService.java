@@ -1,5 +1,6 @@
 package com.example.myApp.service;
 
+import com.example.myApp.dto.ForgetPasswordRequest;
 import com.example.myApp.dto.UserUpdateRequest;
 import com.example.myApp.dto.login.RegisterRequest;
 import com.example.myApp.dto.login.UserDTO;
@@ -15,4 +16,5 @@ public interface UserService {
     UserDTO getUserProfile(String email);
     void updateUserProfile(String email, UserUpdateRequest userUpdateRequest);
     List<UserDTO> getAllUsers();
+    String resetPassword(ForgetPasswordRequest request);
 }

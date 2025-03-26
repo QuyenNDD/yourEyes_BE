@@ -1,5 +1,6 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.ForgetPasswordRequest;
 import com.example.myApp.dto.UserUpdateRequest;
 import com.example.myApp.dto.login.AuthResponse;
 import com.example.myApp.dto.login.LoginRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -38,7 +40,7 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, BindingResult result) {
         try {
             if (result.hasErrors()){
-                return ResponseEntity.badRequest().body(result.getFieldError().getDefaultMessage());
+                return ResponseEntity.badRequest().body(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
             }
             boolean isAuthenticated = userService.authenticate(request.getEmail(), request.getPassword());
             if (isAuthenticated) {
@@ -56,7 +58,7 @@ public class AuthController {
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest request, BindingResult result){
         try{
             if (result.hasErrors()){
-                return ResponseEntity.badRequest().body(result.getFieldError().getDefaultMessage());
+                return ResponseEntity.badRequest().body(Objects.requireNonNull(result.getFieldError()).getDefaultMessage());
             }
             userService.registerUser(request);
             return ResponseEntity.ok("Register successfully");
@@ -78,5 +80,15 @@ public class AuthController {
         String email = principal.getName();
         userService.updateUserProfile(email, userUpdateRequest);
         return ResponseEntity.ok("Update successfully");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ForgetPasswordRequest request){
+        try {
+            String message = userService.resetPassword(request);
+            return ResponseEntity.ok(message);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
