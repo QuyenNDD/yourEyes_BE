@@ -88,8 +88,6 @@ public class OrderServiceImpl implements OrderService {
     public OrderDetailResponse getOrderDetail(int orderId, String email){
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại!"));
-
-
         Order order = orderRepository.findById(orderId)
            .orElseThrow(() -> new RuntimeException("Order không tồn tại!"));
 
@@ -103,7 +101,8 @@ public class OrderServiceImpl implements OrderService {
                         detail.getProducts().getId(),
                         detail.getProducts().getName(),
                         detail.getQuantity(),
-                        detail.getPrice()
+                        detail.getPrice(),
+                        detail.getProducts().getImageUrl()
                 )
         ).collect(Collectors.toList());
         return new OrderDetailResponse(order.getId(), order.getFinalPrice(), order.getTotalPrice(),order.getStatus(), products);
