@@ -106,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
                         detail.getPrice()
                 )
         ).collect(Collectors.toList());
-        return new OrderDetailResponse(order.getId(), order.getFinalPrice(), order.getStatus(), products);
+        return new OrderDetailResponse(order.getId(), order.getFinalPrice(), order.getTotalPrice(),order.getStatus(), products);
     }
     @Override
     public Order updateOrderStatus(int id, OrderStatus newStatus, String email){
