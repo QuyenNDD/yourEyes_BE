@@ -1,9 +1,6 @@
 package com.example.myApp.service.serviceImpl;
 
-import com.example.myApp.dto.OrderDetailResponse;
-import com.example.myApp.dto.OrderHistoryResponse;
-import com.example.myApp.dto.OrderProductResponse;
-import com.example.myApp.dto.OrderResponse;
+import com.example.myApp.dto.*;
 import com.example.myApp.enity.*;
 import com.example.myApp.enums.OrderStatus;
 import com.example.myApp.repository.*;
@@ -12,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,34 +34,64 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findOrderByUserId(id);
     }
 
-    @Transactional
-    public OrderResponse placeOrder(String userEmail, String discountCode) {
+    @Override
+    public OrderResponse placeOrder(String userEmail, String discountCode, List<Integer> cartItemIds) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại!"));
-
-        List<Cart> cartItems = cartRepository.findByUser(user);
-        if (cartItems.isEmpty()) {
-            throw new RuntimeException("Giỏ hàng trống!");
+        if (cartItemIds == null || cartItemIds.isEmpty()) {
+            throw new RuntimeException("Chưa chọn sản phẩm nào để đặt hàng!");
         }
-
+        List<Cart> cartItems = cartRepository.findByIdInAndUser(cartItemIds, user);
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng đã chọn!");
+        }
         Discount discount = null;
         if (discountCode != null && !discountCode.isEmpty()) {
             discount = discountRepository.findByCode(discountCode)
                     .orElseThrow(() -> new RuntimeException("Mã giảm giá không tồn tại!"));
         }
+        BigDecimal totalPrice = cartItems.stream()
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Chỉ lưu order mà không tính toán giá tiền
+        BigDecimal finalPrice = totalPrice;
+        if (discount != null && discount.getDiscountPercentage() != null) {
+            BigDecimal discountAmount = totalPrice.multiply(discount.getDiscountPercentage())
+                    .divide(BigDecimal.valueOf(100));
+            finalPrice = totalPrice.subtract(discountAmount);
+        }
         Order order = Order.builder()
                 .user(user)
                 .discount(discount)
                 .status(OrderStatus.PENDING)
+                .totalPrice(totalPrice)
+                .finalPrice(finalPrice)
                 .createdAt(LocalDateTime.now())
                 .build();
-
         Order savedOrder = orderRepository.save(order);
+
+        for (Cart cartItem : cartItems) {
+            BigDecimal itemTotalPrice = cartItem.getProduct().getPrice()
+                    .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+
+            OrderDetail orderDetail = OrderDetail.builder()
+                    .order(savedOrder)
+                    .products(cartItem.getProduct())
+                    .quantity(cartItem.getQuantity())
+                    .price(cartItem.getProduct().getPrice())
+                    .totalPrice(itemTotalPrice)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            orderDetailRepository.save(orderDetail);
+
+            // Xóa cartItem sau khi đặt
+            cartRepository.delete(cartItem);
+        }
 
         return new OrderResponse(savedOrder);
     }
+
+
 
     @Override
     public List<OrderHistoryResponse> getOrderHistory(String userEmail) {
@@ -75,8 +103,8 @@ public class OrderServiceImpl implements OrderService {
             Map<Integer, Integer> products = orderDetailRepository.findByOrder(order)
                     .stream()
                     .collect(Collectors.toMap(
-                            orderDetail -> orderDetail.getProducts().getId(), // 🛑 Lấy productId
-                            OrderDetail::getQuantity         // 🛑 Lấy số lượng
+                            orderDetail -> orderDetail.getProducts().getId(),
+                            OrderDetail::getQuantity
                     ));
 
             return new OrderHistoryResponse(order.getId(), order.getStatus(), order.getCreatedAt(),

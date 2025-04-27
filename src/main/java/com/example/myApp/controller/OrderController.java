@@ -1,5 +1,6 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.PlaceOrderRequest;
 import com.example.myApp.dto.OrderDetailResponse;
 import com.example.myApp.dto.OrderHistoryResponse;
 import com.example.myApp.dto.OrderResponse;
@@ -7,7 +8,6 @@ import com.example.myApp.enity.Order;
 import com.example.myApp.enums.OrderStatus;
 import com.example.myApp.repository.OrderRepository;
 import com.example.myApp.service.OrderService;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,10 +33,10 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
     @PostMapping("/place")
-    public ResponseEntity<?> placeOrder(@RequestParam(required = false) String discountCode,
+    public ResponseEntity<?> placeOrder(@RequestBody PlaceOrderRequest placeOrderRequest,
                                         Principal principal) {
-        String userEmail = principal.getName(); // Lấy email từ token
-        OrderResponse response = orderService.placeOrder(userEmail, discountCode);
+        String userEmail = principal.getName();
+        OrderResponse response = orderService.placeOrder(userEmail, placeOrderRequest.getDiscountCode(), placeOrderRequest.getCartItemIds());
         return ResponseEntity.ok(response);
     }
 
