@@ -13,10 +13,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -59,19 +67,42 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Products addProducts(ProductDTO productDTO) {
-        Category category = categoryRepository.findByName(productDTO.getCategory())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        Products products = Products.builder()
-                .name(productDTO.getName())
-                .description(productDTO.getDescription())
-                .price(productDTO.getPrice())
-                .stock(0)
-                .categoryId(category)
-                .imageUrl(productDTO.getImageUrl())
-                .createdAt(LocalDateTime.now())
-                .build();
-        return productRepository.save(products);
+    public Products addProducts(ProductDTO productDTO, MultipartFile image) {
+        try {
+            // Tìm category
+            Category category = categoryRepository.findByName(productDTO.getCategory())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+
+            // Tạo thư mục uploads nếu chưa có
+            String uploadDir = "uploads/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdirs();
+
+            // Tạo tên file duy nhất
+            String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir + fileName);
+
+            // Lưu file vào thư mục uploads/
+            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Tạo đối tượng Products
+            Products products = Products.builder()
+                    .name(productDTO.getName())
+                    .description(productDTO.getDescription())
+                    .price(productDTO.getPrice())
+                    .stock(0)
+                    .categoryId(category)
+                    .imageUrl(uploadDir + fileName)  // Lưu đường dẫn ảnh
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            return productRepository.save(products);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi khi lưu file ảnh: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi thêm sản phẩm: " + e.getMessage(), e);
+        }
     }
 
     @Override

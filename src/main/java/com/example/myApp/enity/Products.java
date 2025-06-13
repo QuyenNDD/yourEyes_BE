@@ -45,7 +45,7 @@ public class Products {
         this.name = productDTO.getName();
         this.description = productDTO.getDescription();
         this.price = productDTO.getPrice();
-        this.imageUrl = productDTO.getImageUrl();
+//        this.imageUrl = productDTO.getImageUrl();
 
         // Tìm category theo tên và cập nhật
         this.categoryId = categoryRepository.findByName(productDTO.getCategory())

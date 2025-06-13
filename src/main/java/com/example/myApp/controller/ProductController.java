@@ -8,13 +8,23 @@ import com.example.myApp.repository.CategoryRepository;
 import com.example.myApp.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.myApp.service.ProductService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -50,17 +60,18 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addProducts(@RequestBody ProductDTO productDTO){
+    public ResponseEntity<?> addProducts(@ModelAttribute ProductDTO productDTO,
+                                         @RequestParam("image") MultipartFile image){
         try {
-            Products products = productService.addProducts(productDTO);
-            return ResponseEntity.ok(products);
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Products savedProduct = productService.addProducts(productDTO, image);
+            return ResponseEntity.ok(savedProduct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
         }
     }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateProducts(
             @PathVariable int id,
