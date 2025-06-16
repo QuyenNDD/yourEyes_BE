@@ -144,8 +144,23 @@ public class OrderServiceImpl implements OrderService {
         }
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderStatus currentStatus = order.getStatus();
+
+        if (!isValidTransition(currentStatus, newStatus)) {
+            throw new IllegalStateException("Không thể chuyển từ " + currentStatus + " sang " + newStatus);
+        }
+
         order.setStatus(newStatus);
         return orderRepository.save(order);
+    }
+
+    private boolean isValidTransition(OrderStatus current, OrderStatus next) {
+        return switch (current) {
+            case PENDING -> next == OrderStatus.CONFIRMED || next == OrderStatus.CANCELED;
+            case CONFIRMED -> next == OrderStatus.SHIPPING || next == OrderStatus.CANCELED;
+            case SHIPPING -> next == OrderStatus.COMPLETED || next == OrderStatus.RETURNED || next == OrderStatus.CANCELED;
+            default -> false;
+        };
     }
 
     @Override

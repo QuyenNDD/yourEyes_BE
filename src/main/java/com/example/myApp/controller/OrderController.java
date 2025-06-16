@@ -8,8 +8,11 @@ import com.example.myApp.enity.Order;
 import com.example.myApp.enums.OrderStatus;
 import com.example.myApp.repository.OrderRepository;
 import com.example.myApp.service.OrderService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -55,14 +58,17 @@ public class OrderController {
         return ResponseEntity.ok(orderDetailResponse);
     }
     @PutMapping("/{orderId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOrderStatus(@PathVariable int orderId,
                                                 @RequestParam OrderStatus newStatus,
                                                 Principal principal) {
         try {
             Order updateOrder = orderService.updateOrderStatus(orderId, newStatus, principal.getName());
             return ResponseEntity.ok(updateOrder);
-        }catch (RuntimeException e){
+        }catch (IllegalStateException | IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
     @GetMapping
