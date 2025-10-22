@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +27,35 @@ public class UserController {
         }
         List<UserDTO> userDTOS = userService.getAllUsers();
         return  ResponseEntity.ok(userDTOS);
+    }
+
+    @PostMapping("/banUser/{userId}")
+    public ResponseEntity<?> banUser(@PathVariable int userId, HttpServletRequest request){
+        try{
+            Integer roleId = (Integer) request.getAttribute("roleId");
+            if (roleId == null || roleId != 2){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+            }
+            userService.banUser(userId);
+            return ResponseEntity.ok("Ban user success!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/unbanUser/{userId}")
+    public ResponseEntity<?> unbanUser(@PathVariable int userId, HttpServletRequest request){
+        try{
+            Integer roleId = (Integer) request.getAttribute("roleId");
+            if (roleId == null || roleId != 2){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+            }
+            userService.unbanUser(userId);
+            return ResponseEntity.ok("Unban user success!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
     }
 }

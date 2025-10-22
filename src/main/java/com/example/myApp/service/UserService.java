@@ -17,4 +17,6 @@ public interface UserService {
     void updateUserProfile(String email, UserUpdateRequest userUpdateRequest);
     List<UserDTO> getAllUsers();
     String resetPassword(ForgetPasswordRequest request);
+    void banUser(int userId);
+    void unbanUser(int userId);
 }

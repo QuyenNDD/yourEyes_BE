@@ -99,4 +99,14 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return "Mật khẩu đã được đặt lại thành công!";
     }
+
+    @Override
+    public void banUser(int id){
+        userRepository.banUser(id);
+    }
+
+    @Override
+    public void unbanUser(int id){
+        userRepository.unbanUser(id);
+    }
 }
