@@ -1,5 +1,6 @@
 package com.example.myApp.security;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,34 +24,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
 
-        @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
-
         // Kiểm tra token có tồn tại và đúng định dạng không
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = authHeader.substring(7);
-        String email = jwtTokenProvider.extractEmail(token);
-
-        // Kiểm tra email có hợp lệ không
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-            // Kiểm tra token có hợp lệ với user không
-            if (jwtTokenProvider.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try{
+                Claims claims = jwtTokenProvider.validateToken(token);
+                String email = claims.getSubject();
+                Integer roleId = claims.get("roleId", Integer.class);
+                Integer userId = claims.get("userId", Integer.class);
+                // Gán thông tin user vào request attribute
+                request.setAttribute("email", email);
+                request.setAttribute("roleId", roleId);
+                request.setAttribute("userId", userId);
+            }catch (Exception e){
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+                return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }

@@ -4,6 +4,7 @@ import com.example.myApp.dto.ReviewRequest;
 import com.example.myApp.dto.ReviewResponse;
 import com.example.myApp.enity.Review;
 import com.example.myApp.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,8 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @PostMapping("/add")
-    public ResponseEntity<Review> addReview(@RequestBody ReviewRequest reviewRequest, Principal principal){
-        String email = principal.getName();
+    public ResponseEntity<Review> addReview(@RequestBody ReviewRequest reviewRequest, HttpServletRequest request){
+        String email = (String) request.getAttribute("email");
         return ResponseEntity.ok(reviewService.addReview(email, reviewRequest));
     }
 

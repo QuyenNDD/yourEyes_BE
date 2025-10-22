@@ -25,9 +25,9 @@ public class StockImportServiceImpl implements StockImportService {
     public void importStock(String employeeEmail, StockImportRequest stockImportRequests) {
         User employee = userRepository.findByEmail(employeeEmail)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
-        if (!employee.getRole().getName().equals("EMPLOYEE") && !employee.getRole().getName().equals("ADMIN")) {
-            throw new RuntimeException("Employee does not have permission to import stock");
-        }
+//        if (!employee.getRole().equals("EMPLOYEE") && !employee.getRole().equals("ADMIN")) {
+//            throw new RuntimeException("Employee does not have permission to import stock");
+//        }
 
         Products products = productRepository.findByName(stockImportRequests.getProductName())
                 .orElseThrow(() -> new RuntimeException("Product not found"));

@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface UserService {
     Optional<User> loginEmail(String email, String password);
     void registerUser(RegisterRequest request);
-    boolean authenticate(String email, String password);
+    String authenticate(String email, String password);
     UserDTO getUserProfile(String email);
     void updateUserProfile(String email, UserUpdateRequest userUpdateRequest);
     List<UserDTO> getAllUsers();

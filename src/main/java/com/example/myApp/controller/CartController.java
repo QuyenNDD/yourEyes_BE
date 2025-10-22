@@ -4,6 +4,7 @@ import com.example.myApp.dto.CartRequest;
 import com.example.myApp.enity.Cart;
 import com.example.myApp.service.CartService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,13 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addToCart(@RequestBody CartRequest cartRequest, Principal principal) {
+    public ResponseEntity<?> addToCart(@RequestBody CartRequest cartRequest,
+                                       HttpServletRequest request) {
         try {
-            String email = principal.getName();
+            String email = (String) request.getAttribute("email");
+            if (email == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Vui lòng đăng nhập"));
+            }
             cartService.addToCart(email, cartRequest.getProductId(), cartRequest.getQuantity());
             return ResponseEntity.ok(Map.of("message", "Thêm vào giỏ hàng thành công"));
         } catch (EntityNotFoundException ex) {
@@ -42,9 +47,10 @@ public class CartController {
     }
 
     @DeleteMapping("/remove/{productId}")
-    public ResponseEntity<?> removeFromCart(@PathVariable int productId, Principal principal) {
+    public ResponseEntity<?> removeFromCart(@PathVariable int productId,
+                                            HttpServletRequest request) {
         try {
-            String email = principal.getName();
+            String email = (String) request.getAttribute("email");
             cartService.removeFromCart(email, productId);
             return ResponseEntity.ok(Map.of("message", "Xóa sản phẩm khỏi giỏ hàng thành công"));
         } catch (EntityNotFoundException ex) {
@@ -63,9 +69,9 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getCart(Principal principal) {
+    public ResponseEntity<?> getCart(HttpServletRequest request) {
         try {
-            String email = principal.getName();
+            String email = (String) request.getAttribute("email");
             List<Cart> cartItems = cartService.getCartByUser(email);
             return ResponseEntity.ok(Map.of("cart", cartItems));
         } catch (Exception ex) {
@@ -78,9 +84,10 @@ public class CartController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateCart(@RequestBody CartRequest cartRequest, Principal principal) {
+    public ResponseEntity<?> updateCart(@RequestBody CartRequest cartRequest,
+                                        HttpServletRequest request) {
         try {
-            String email = principal.getName();
+            String email = (String) request.getAttribute("email");
             cartService.updateCart(email, cartRequest.getProductId(), cartRequest.getQuantity());
             return ResponseEntity.ok(Map.of("message", "Cập nhật giỏ hàng thành công"));
         } catch (EntityNotFoundException ex) {

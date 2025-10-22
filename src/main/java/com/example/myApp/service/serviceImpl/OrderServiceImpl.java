@@ -139,9 +139,9 @@ public class OrderServiceImpl implements OrderService {
     public Order updateOrderStatus(int id, OrderStatus newStatus, String email){
         User employee = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
-        if (!employee.getRole().getName().equals("EMPLOYEE") && !employee.getRole().getName().equals("ADMIN")) {
-            throw new RuntimeException("Employee does not have permission to update status");
-        }
+//        if (!employee.getRole().equals("EMPLOYEE") && !employee.getRole().equals("ADMIN")) {
+//            throw new RuntimeException("Employee does not have permission to update status");
+//        }
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         OrderStatus currentStatus = order.getStatus();

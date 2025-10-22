@@ -32,13 +32,19 @@ public class Products {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Category categoryId;
+    private Category category;
 
     @Column(name = "image_url")
     private String imageUrl;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private String size;
+    private String color;
+
+    @Column(name = "gender_target")
+    private String genderTarget;
 
     public void updateFromDTO(ProductDTO productDTO,
                               CategoryRepository categoryRepository) {
@@ -48,7 +54,7 @@ public class Products {
 //        this.imageUrl = productDTO.getImageUrl();
 
         // Tìm category theo tên và cập nhật
-        this.categoryId = categoryRepository.findByName(productDTO.getCategory())
+        this.category = categoryRepository.findByName(productDTO.getCategory())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 }

@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
     Optional<Products> findByName(String name);
 
     @Query("SELECT p FROM Products p WHERE " +
-            "(:categoryId IS NULL OR p.categoryId.id = :categoryId) AND " +
+            "(:categoryId IS NULL OR p.category.id = :categoryId) AND " +
             "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
             "(:maxPrice IS NULL OR p.price <= :maxPrice)")
     List<Products> findByFilters(@Param("categoryId") Integer categoryId,

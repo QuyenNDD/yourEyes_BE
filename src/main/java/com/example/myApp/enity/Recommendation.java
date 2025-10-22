@@ -10,22 +10,27 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "inventory")
+@Table(name = "recommendations")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Inventory {
+public class Recommendation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private int id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Products products;
 
-    @Column(name = "stock_quantity", nullable = false)
-    private int stockQuantity;
+    @Column(name = "score")
+    private int score;
 
-    @Column(name = "last_updated")
-    private LocalDateTime lastUpdated = LocalDateTime.now();
+    @Column(name = "generated_at")
+    private LocalDateTime generatedAt = LocalDateTime.now();
 }

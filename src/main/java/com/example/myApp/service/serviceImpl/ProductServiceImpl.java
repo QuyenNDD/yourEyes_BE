@@ -34,8 +34,6 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    private InventoryRepository inventoryRepository;
-    @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private UserRepository userRepository;
@@ -55,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
                 products.getDescription(),
                 products.getStock(),
                 products.getPrice(),
-                products.getCategoryId().getName(),
+                products.getCategory().getName(),
                 products.getImageUrl()
         );
     }
@@ -91,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
                     .description(productDTO.getDescription())
                     .price(productDTO.getPrice())
                     .stock(0)
-                    .categoryId(category)
+                    .category(category)
                     .imageUrl(uploadDir + fileName)  // Lưu đường dẫn ảnh
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -116,10 +114,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductAvailableResponse checkProductAvailable(int productId){
         Products products = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        Inventory inventory = inventoryRepository.findByProducts(products)
-                .orElseThrow(() -> new RuntimeException("Inventory not found"));
-        boolean available = inventory.getStockQuantity() > 0;
-        return new ProductAvailableResponse(productId, inventory.getStockQuantity());
+        return new ProductAvailableResponse(productId, products.getStock());
     }
 
     @Override

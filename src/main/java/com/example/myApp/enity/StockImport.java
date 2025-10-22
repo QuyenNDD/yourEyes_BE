@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -35,4 +36,7 @@ public class StockImport {
     @ManyToOne
     @JoinColumn(name = "id_employee", nullable = false)
     private User user;
+
+    @Column(nullable = false,  precision = 10, scale = 2)
+    private BigDecimal price;
 }

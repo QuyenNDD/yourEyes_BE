@@ -34,10 +34,8 @@ public class User {
     @Column(nullable = false)
     private String address;
 
-    @ManyToOne
-//    @JoinColumn(name = "role_id", nullable = false)
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @Column(name = "role_id", nullable = false)
+    private int role;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

@@ -42,4 +42,10 @@ public class Order {
 
     @Column(name = "final_price",  precision = 38, scale = 2)
     private BigDecimal finalPrice;
+
+    @Column(name = "isPaid")
+    private boolean isPaid;
+
+    @Column(name = "paidAt")
+    private LocalDateTime paidAt;
 }

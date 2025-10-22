@@ -9,6 +9,7 @@ import com.example.myApp.enums.OrderStatus;
 import com.example.myApp.repository.OrderRepository;
 import com.example.myApp.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/order")
@@ -28,42 +30,60 @@ public class OrderController {
 
 //    Lay don hang cua mot nguoi
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Order>> getOrderByUserId(@PathVariable int userId){
-        List<Order> orders = orderService.findOrderByUserId(userId);
-        if (orders.isEmpty()){
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<?> getOrderByUserId(@PathVariable int userId,
+                                              HttpServletRequest request){
+        try {
+            Integer roleId = (Integer) request.getAttribute("roleId");
+            System.out.println(userId);
+            if (roleId != 2 || roleId == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+            }
+            List<Order> orders = orderService.findOrderByUserId(userId);
+            if (orders.isEmpty()){
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(orders);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", 500,
+                    "error", "Lỗi hệ thống",
+                    "message", e.getMessage()
+            ));
         }
-        return ResponseEntity.ok(orders);
     }
     @PostMapping("/place")
     public ResponseEntity<?> placeOrder(@RequestBody PlaceOrderRequest placeOrderRequest,
-                                        Principal principal) {
-        String userEmail = principal.getName();
+                                        HttpServletRequest request) {
+        String userEmail = (String) request.getAttribute("email");
         OrderResponse response = orderService.placeOrder(userEmail, placeOrderRequest.getDiscountCode(), placeOrderRequest.getCartItemIds());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<OrderHistoryResponse>> getOrderHistory(Principal principal) {
-        String userEmail = principal.getName(); // Lấy email từ token
+    public ResponseEntity<List<OrderHistoryResponse>> getOrderHistory(HttpServletRequest request) {
+        String userEmail = (String) request.getAttribute("email"); // Lấy email từ token
         List<OrderHistoryResponse> orderHistory = orderService.getOrderHistory(userEmail);
         return ResponseEntity.ok(orderHistory);
     }
 
     @GetMapping("history/{orderId}")
     public ResponseEntity<OrderDetailResponse> getOrderHistoryByOrderId(@PathVariable int orderId
-                                                    ,Principal principal){
-        String email = principal.getName();
+                                                    ,HttpServletRequest request){
+        String email = (String) request.getAttribute("email");;
         OrderDetailResponse orderDetailResponse = orderService.getOrderDetail(orderId,email);
         return ResponseEntity.ok(orderDetailResponse);
     }
     @PutMapping("/{orderId}/status")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOrderStatus(@PathVariable int orderId,
                                                 @RequestParam OrderStatus newStatus,
-                                                Principal principal) {
+                                                HttpServletRequest request) {
         try {
-            Order updateOrder = orderService.updateOrderStatus(orderId, newStatus, principal.getName());
+            Integer userId = (Integer) request.getAttribute("userId");
+            if (userId == null || userId != 2) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+            }
+            String email = (String) request.getAttribute("email");
+            Order updateOrder = orderService.updateOrderStatus(orderId, newStatus, email);
             return ResponseEntity.ok(updateOrder);
         }catch (IllegalStateException | IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -72,13 +92,22 @@ public class OrderController {
         }
     }
     @GetMapping
-    public ResponseEntity<List<Order>> getOrdersByStatus(@RequestParam OrderStatus status) {
+    public ResponseEntity<?> getOrdersByStatus(@RequestParam OrderStatus status,
+                                                         HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        if (userId == null || userId != 2) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+        }
         List<Order> orders = orderService.findOrderByStatus(status);
         return ResponseEntity.ok(orders);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Order>> getAllOrders() {
+    public ResponseEntity<?> getAllOrders(HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        if (userId == null || userId != 2) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+        }
         List<Order> orders = orderRepository.findAll();
         return ResponseEntity.ok(orders);
     }

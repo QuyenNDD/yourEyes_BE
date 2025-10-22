@@ -2,6 +2,7 @@ package com.example.myApp.controller;
 
 import com.example.myApp.dto.StockImportRequest;
 import com.example.myApp.service.StockImportService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,15 @@ public class StockImportController {
     private final StockImportService stockImportService;
 
     @PostMapping("/import")
-    public ResponseEntity<?> importStock(@RequestBody StockImportRequest stockImportRequest, Principal principal){
+    public ResponseEntity<?> importStock(@RequestBody StockImportRequest stockImportRequest, HttpServletRequest request){
         try {
-            String employeeEmail = principal.getName(); // Lấy email từ token
+            Integer userId = (Integer) request.getAttribute("userId");
+            String employeeEmail = (String) request.getAttribute("email");
+            if (employeeEmail == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vui lòng đăng nhập");
+            }else if (userId == null || userId != 2 || userId != 3) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+            }
             stockImportService.importStock(employeeEmail, stockImportRequest);
             return ResponseEntity.ok("Nhập hàng thành công!");
         } catch (Exception e) {

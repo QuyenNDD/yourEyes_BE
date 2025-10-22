@@ -4,7 +4,9 @@ import com.example.myApp.dto.DiscountDTO;
 import com.example.myApp.dto.DiscountRequest;
 import com.example.myApp.enity.Discount;
 import com.example.myApp.service.DiscountService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +26,16 @@ public class DiscountController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addDiscount(@RequestBody DiscountRequest discountRequest){
+    public ResponseEntity<?> addDiscount(@RequestBody DiscountRequest discountRequest,
+                                         HttpServletRequest request){
         try{
+            String email = (String) request.getAttribute("email");
+            Integer roleId = (Integer) request.getAttribute("roleId");
+            if (email == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vui lòng đăng nhập");
+            }else if (roleId != 2 || roleId == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+            }
             discountService.addDiscount(discountRequest);
             return ResponseEntity.ok("Discount added successfully");
         }catch (RuntimeException e){

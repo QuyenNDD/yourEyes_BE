@@ -13,7 +13,6 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findOrderByUserId(int id);
-
     List<Order> findByUserOrderByCreatedAtDesc(User user);
     Optional<Order> findById(int id);
     List<Order> findByStatus(OrderStatus status);

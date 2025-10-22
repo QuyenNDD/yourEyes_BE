@@ -4,14 +4,12 @@ import com.example.myApp.dto.ForgetPasswordRequest;
 import com.example.myApp.dto.UserUpdateRequest;
 import com.example.myApp.dto.login.RegisterRequest;
 import com.example.myApp.dto.login.UserDTO;
-import com.example.myApp.enity.Role;
 import com.example.myApp.enity.User;
-import com.example.myApp.repository.RoleRepository;
 import com.example.myApp.repository.UserRepository;
+import com.example.myApp.security.JwtTokenProvider;
 import com.example.myApp.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,9 +25,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder  bCryptPasswordEncoder;
-    private final RoleRepository roleRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public Optional<User> loginEmail(String email, String password){
@@ -42,31 +39,25 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists!");
         }
-
-        Role userRole = roleRepository.findByName("USER").
-                orElseThrow(() -> new RuntimeException("Role không tồn tại"));
-
         User user = User.builder()
                 .fullname(request.getFullname())
                 .email(request.getEmail())
                 .password(bCryptPasswordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .address(request.getAddress())
-                .role(userRole) // Nếu có role
+                .role(1) // 2 là admin, 1 là user, 3 là employee
                 .build();
-
         userRepository.save(user);
     }
 
     @Override
-    public boolean authenticate(String email, String password) {
+    public String authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Sai tài khoản hoặc mật khẩu"));
-
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Sai tài khoản hoặc mật khẩu");
         }
-        return true;
+        return jwtTokenProvider.generateToken(user);
     }
 
     @Override

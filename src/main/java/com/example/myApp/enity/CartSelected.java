@@ -8,15 +8,18 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "roles")
+@Table(name = "cart_selected")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Role {
+public class CartSelected {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
+
+    private int quantity;
 }
