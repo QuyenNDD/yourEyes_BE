@@ -21,6 +21,6 @@ public interface ProductService {
     Products addProducts(ProductDTO productDTO, MultipartFile image);
     void deleteProduct(int id);
     ProductAvailableResponse checkProductAvailable(int id);
-    List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice);
+    List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color, String genderTarget);
 }
 

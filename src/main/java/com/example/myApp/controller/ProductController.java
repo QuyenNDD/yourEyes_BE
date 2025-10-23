@@ -114,9 +114,11 @@ public class ProductController {
     public ResponseEntity<List<Products>> filterProducts(
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice) {
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = false) String genderTarget) {
 
-        List<Products> products = productService.filterProducts(categoryId, minPrice, maxPrice);
+        List<Products> products = productService.filterProducts(categoryId, minPrice, maxPrice, color, genderTarget);
         return ResponseEntity.ok(products);
     }
 }

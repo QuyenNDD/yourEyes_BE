@@ -118,7 +118,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice) {
-        return productRepository.findByFilters(categoryId, minPrice, maxPrice);
+    public List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color, String genderTarget) {
+        return productRepository.findByFilters(categoryId, minPrice, maxPrice, color, genderTarget);
     }
 }
