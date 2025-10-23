@@ -67,14 +67,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
         }
     }
-//
-//    @PutMapping("/profile")
-//    public ResponseEntity<String> updateUserProfile(@Valid @RequestBody UserUpdateRequest userUpdateRequest,
-//                                                    Principal principal){
-//        String email = principal.getName();
-//        userService.updateUserProfile(email, userUpdateRequest);
-//        return ResponseEntity.ok("Update successfully");
-//    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<String> updateUserProfile(@Valid @RequestBody UserUpdateRequest userUpdateRequest,
+                                                    HttpServletRequest request){
+        String email = (String) request.getAttribute("email");
+        userService.updateUserProfile(email, userUpdateRequest);
+        return ResponseEntity.ok("Update successfully");
+    }
 
 //    @PostMapping("/reset-password")
 //    public ResponseEntity<?> resetPassword(@RequestBody ForgetPasswordRequest request){

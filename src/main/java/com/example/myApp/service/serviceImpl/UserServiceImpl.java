@@ -54,6 +54,9 @@ public class UserServiceImpl implements UserService {
     public String authenticate(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Sai tài khoản hoặc mật khẩu"));
+        if (!user.isActive()){
+            throw new BadCredentialsException("Tài khoản của bạn đã bị khóa");
+        }
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Sai tài khoản hoặc mật khẩu");
         }
