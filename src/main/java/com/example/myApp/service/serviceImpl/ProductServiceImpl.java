@@ -6,6 +6,7 @@ import com.example.myApp.dto.response.ProductResponse;
 import com.example.myApp.enity.*;
 import com.example.myApp.repository.*;
 import com.example.myApp.service.ProductService;
+import com.example.myApp.service.cloud.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +38,8 @@ public class ProductServiceImpl implements ProductService {
     private OrderRepository orderRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public Page<Products> getAllProducts(int page, int size) {
@@ -67,23 +71,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Products addProducts(ProductDTO productDTO, MultipartFile image) {
+    public Products addProducts(ProductDTO productDTO, List<MultipartFile> images) {
         try {
             // Tìm category
             Category category = categoryRepository.findByName(productDTO.getCategory())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
 
             // Tạo thư mục uploads nếu chưa có
-            String uploadDir = "uploads/";
-            File dir = new File(uploadDir);
-            if (!dir.exists()) dir.mkdirs();
-
-            // Tạo tên file duy nhất
-            String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir + fileName);
-
-            // Lưu file vào thư mục uploads/
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
             // Tạo đối tượng Products
             Products products = Products.builder()
@@ -92,14 +86,22 @@ public class ProductServiceImpl implements ProductService {
                     .price(productDTO.getPrice())
                     .stock(0)
                     .category(category)
-                    .imageUrl(uploadDir + fileName)  // Lưu đường dẫn ảnh
+                    .size(productDTO.getSize())
+                    .color(productDTO.getColor())
+                    .genderTarget(productDTO.getGenderTarget())
                     .createdAt(LocalDateTime.now())
                     .build();
 
+            if (images != null && !images.isEmpty()) {
+                List<String> productImageUrls = new ArrayList<>();
+                for (MultipartFile img : images) {
+                    String url = cloudinaryService.upload(img);
+                    productImageUrls.add(url);
+                }
+                products.setImageUrl(String.join(";", productImageUrls));
+            }
             return productRepository.save(products);
 
-        } catch (IOException e) {
-            throw new RuntimeException("Lỗi khi lưu file ảnh: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi thêm sản phẩm: " + e.getMessage(), e);
         }

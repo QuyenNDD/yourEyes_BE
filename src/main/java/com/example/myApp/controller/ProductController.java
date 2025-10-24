@@ -73,20 +73,21 @@ public class ProductController {
 
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addProducts(@ModelAttribute ProductDTO productDTO,
-                                         @RequestParam("image") MultipartFile image,
+                                         @RequestParam(value = "images", required = false) List<MultipartFile> images,
                                          HttpServletRequest request){
         try {
-            Integer userId = (Integer) request.getAttribute("userId");
-            if (userId == null || userId != 2) {
+            Integer roleId = (Integer) request.getAttribute("roleId");
+            if (roleId == null || roleId != 2) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
             }
-            Products savedProduct = productService.addProducts(productDTO, image);
+            Products savedProduct = productService.addProducts(productDTO, images);
             return ResponseEntity.ok(savedProduct);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
     }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateProducts(
             @PathVariable int id,

@@ -14,6 +14,9 @@ public class ProductDTO {
     private String description;
     private BigDecimal price;
     private String category;
+    private String size;
+    private String color;
+    private String genderTarget;
 
     public ProductDTO(ProductDTO productDTO){
         this.name = productDTO.getName();
