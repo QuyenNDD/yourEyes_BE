@@ -1,9 +1,6 @@
 package com.example.myApp.service;
 
-import com.example.myApp.dto.StockImportRequest;
-import com.example.myApp.enity.StockImport;
-
-import java.util.List;
+import com.example.myApp.dto.request.StockImportRequest;
 
 public interface StockImportService {
     void importStock(String employeeEmail, StockImportRequest stockImportRequests);

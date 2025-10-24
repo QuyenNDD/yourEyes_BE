@@ -1,13 +1,11 @@
-package com.example.myApp.dto;
+package com.example.myApp.dto.request;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Locale;
 
 @Getter
 @Setter

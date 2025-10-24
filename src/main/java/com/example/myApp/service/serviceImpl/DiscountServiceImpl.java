@@ -1,12 +1,11 @@
 package com.example.myApp.service.serviceImpl;
 
 import com.example.myApp.dto.DiscountDTO;
-import com.example.myApp.dto.DiscountRequest;
+import com.example.myApp.dto.request.DiscountRequest;
 import com.example.myApp.enity.Discount;
 import com.example.myApp.repository.DiscountRepository;
 import com.example.myApp.service.DiscountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

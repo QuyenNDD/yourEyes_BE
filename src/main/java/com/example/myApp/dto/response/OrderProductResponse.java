@@ -1,11 +1,10 @@
-package com.example.myApp.dto;
+package com.example.myApp.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter

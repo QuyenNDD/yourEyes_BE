@@ -1,7 +1,7 @@
 package com.example.myApp.service.serviceImpl;
 
-import com.example.myApp.dto.ReviewRequest;
-import com.example.myApp.dto.ReviewResponse;
+import com.example.myApp.dto.request.ReviewRequest;
+import com.example.myApp.dto.response.ReviewResponse;
 import com.example.myApp.enity.Products;
 import com.example.myApp.enity.Review;
 import com.example.myApp.enity.User;

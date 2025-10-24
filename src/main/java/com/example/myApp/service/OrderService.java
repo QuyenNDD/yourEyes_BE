@@ -1,9 +1,9 @@
 package com.example.myApp.service;
 
 
-import com.example.myApp.dto.OrderDetailResponse;
-import com.example.myApp.dto.OrderHistoryResponse;
-import com.example.myApp.dto.OrderResponse;
+import com.example.myApp.dto.response.OrderDetailResponse;
+import com.example.myApp.dto.response.OrderHistoryResponse;
+import com.example.myApp.dto.response.OrderResponse;
 import com.example.myApp.enity.Order;
 import com.example.myApp.enums.OrderStatus;
 

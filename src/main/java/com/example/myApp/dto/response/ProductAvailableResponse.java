@@ -1,4 +1,4 @@
-package com.example.myApp.dto;
+package com.example.myApp.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

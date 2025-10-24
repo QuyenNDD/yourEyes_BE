@@ -1,6 +1,6 @@
 package com.example.myApp.service.serviceImpl;
 
-import com.example.myApp.dto.StockImportRequest;
+import com.example.myApp.dto.request.StockImportRequest;
 import com.example.myApp.enity.Products;
 import com.example.myApp.enity.StockImport;
 import com.example.myApp.enity.User;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

@@ -1,13 +1,9 @@
 package com.example.myApp.service;
 
-import com.example.myApp.dto.ProductAvailableResponse;
+import com.example.myApp.dto.response.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
-import com.example.myApp.dto.ProductResponse;
-import com.example.myApp.enity.Category;
-import com.example.myApp.enity.Order;
+import com.example.myApp.dto.response.ProductResponse;
 import com.example.myApp.enity.Products;
-import com.example.myApp.enity.User;
-import com.example.myApp.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 

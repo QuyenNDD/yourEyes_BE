@@ -1,7 +1,7 @@
 package com.example.myApp.service.serviceImpl;
 
-import com.example.myApp.dto.ForgetPasswordRequest;
-import com.example.myApp.dto.UserUpdateRequest;
+import com.example.myApp.dto.request.ForgetPasswordRequest;
+import com.example.myApp.dto.request.UserUpdateRequest;
 import com.example.myApp.dto.login.RegisterRequest;
 import com.example.myApp.dto.login.UserDTO;
 import com.example.myApp.enity.User;

@@ -1,8 +1,9 @@
 package com.example.myApp.controller;
 
-import com.example.myApp.dto.ProductAvailableResponse;
+import com.example.myApp.dto.response.PageResponse;
+import com.example.myApp.dto.response.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
-import com.example.myApp.dto.ProductResponse;
+import com.example.myApp.dto.response.ProductResponse;
 import com.example.myApp.enity.Products;
 import com.example.myApp.repository.CategoryRepository;
 import com.example.myApp.repository.ProductRepository;
@@ -12,20 +13,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.myApp.service.ProductService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -40,16 +33,33 @@ public class ProductController {
     private CategoryRepository categoryRepository;
     //Lay tat ca san pham
     @GetMapping("/getAll")
-    public ResponseEntity<Page<Products>> getAllProducts(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "10") int size){
-        Page<Products> products = productService.getAllProducts(page, size);
-        return ResponseEntity.ok(products);
+    public ResponseEntity<PageResponse<Products>> getAllProducts(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size){
+        Page<Products> productPage = productService.getAllProducts(page, size);
+
+        PageResponse<Products> response = new PageResponse<>();
+        response.setContent(productPage.getContent());
+        response.setPageNumber(productPage.getNumber());
+        response.setPageSize(productPage.getSize());
+        response.setTotalElements(productPage.getTotalElements());
+        response.setTotalPages(productPage.getTotalPages());
+        response.setLast(productPage.isLast());
+
+        return ResponseEntity.ok(response);
     }
     // Lay san pham bang Id
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProductById(@PathVariable int id){
-        ProductResponse products = productService.getProductById(id);
-        return (products != null) ? ResponseEntity.ok(products) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> getProductById(@PathVariable int id){
+        try{
+            ProductResponse products = productService.getProductById(id);
+            if (products == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm");
+            }
+            return ResponseEntity.ok(products);
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     // Tim kiem san pham theo ten ( gan giong )

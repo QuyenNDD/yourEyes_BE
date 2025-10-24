@@ -1,6 +1,6 @@
 package com.example.myApp.controller;
 
-import com.example.myApp.dto.CartRequest;
+import com.example.myApp.dto.request.CartRequest;
 import com.example.myApp.enity.Cart;
 import com.example.myApp.service.CartService;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 

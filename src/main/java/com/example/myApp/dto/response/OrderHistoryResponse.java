@@ -1,4 +1,4 @@
-package com.example.myApp.dto;
+package com.example.myApp.dto.response;
 
 import com.example.myApp.enums.OrderStatus;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Getter

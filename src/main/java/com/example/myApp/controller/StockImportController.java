@@ -1,6 +1,6 @@
 package com.example.myApp.controller;
 
-import com.example.myApp.dto.StockImportRequest;
+import com.example.myApp.dto.request.StockImportRequest;
 import com.example.myApp.service.StockImportService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/stock-imports")

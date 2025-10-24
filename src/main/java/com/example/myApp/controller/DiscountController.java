@@ -1,14 +1,12 @@
 package com.example.myApp.controller;
 
 import com.example.myApp.dto.DiscountDTO;
-import com.example.myApp.dto.DiscountRequest;
-import com.example.myApp.enity.Discount;
+import com.example.myApp.dto.request.DiscountRequest;
 import com.example.myApp.service.DiscountService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

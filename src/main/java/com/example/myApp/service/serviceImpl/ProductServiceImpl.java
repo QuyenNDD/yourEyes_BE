@@ -1,10 +1,9 @@
 package com.example.myApp.service.serviceImpl;
 
-import com.example.myApp.dto.ProductAvailableResponse;
+import com.example.myApp.dto.response.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
-import com.example.myApp.dto.ProductResponse;
+import com.example.myApp.dto.response.ProductResponse;
 import com.example.myApp.enity.*;
-import com.example.myApp.enums.OrderStatus;
 import com.example.myApp.repository.*;
 import com.example.myApp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,10 @@ public class ProductServiceImpl implements ProductService {
                 products.getStock(),
                 products.getPrice(),
                 products.getCategory().getName(),
-                products.getImageUrl()
+                products.getImageUrl(),
+                products.getSize(),
+                products.getColor(),
+                products.getGenderTarget()
         );
     }
 

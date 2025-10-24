@@ -1,9 +1,9 @@
 package com.example.myApp.controller;
 
-import com.example.myApp.dto.PlaceOrderRequest;
-import com.example.myApp.dto.OrderDetailResponse;
-import com.example.myApp.dto.OrderHistoryResponse;
-import com.example.myApp.dto.OrderResponse;
+import com.example.myApp.dto.request.PlaceOrderRequest;
+import com.example.myApp.dto.response.OrderDetailResponse;
+import com.example.myApp.dto.response.OrderHistoryResponse;
+import com.example.myApp.dto.response.OrderResponse;
 import com.example.myApp.enity.Order;
 import com.example.myApp.enums.OrderStatus;
 import com.example.myApp.repository.OrderRepository;
@@ -13,10 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 

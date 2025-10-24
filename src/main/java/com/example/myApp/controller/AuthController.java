@@ -1,30 +1,19 @@
 package com.example.myApp.controller;
 
-import com.example.myApp.dto.ForgetPasswordRequest;
-import com.example.myApp.dto.UserUpdateRequest;
+import com.example.myApp.dto.request.UserUpdateRequest;
 import com.example.myApp.dto.login.AuthResponse;
 import com.example.myApp.dto.login.LoginRequest;
 import com.example.myApp.dto.login.RegisterRequest;
 import com.example.myApp.dto.login.UserDTO;
-import com.example.myApp.enity.User;
-import com.example.myApp.security.JwtTokenProvider;
 import com.example.myApp.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")

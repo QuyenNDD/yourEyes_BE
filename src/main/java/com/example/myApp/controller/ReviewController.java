@@ -1,8 +1,7 @@
 package com.example.myApp.controller;
 
-import com.example.myApp.dto.ReviewRequest;
-import com.example.myApp.dto.ReviewResponse;
-import com.example.myApp.enity.Review;
+import com.example.myApp.dto.request.ReviewRequest;
+import com.example.myApp.dto.response.ReviewResponse;
 import com.example.myApp.service.ReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
