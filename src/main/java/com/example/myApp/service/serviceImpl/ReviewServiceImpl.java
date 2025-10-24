@@ -5,6 +5,7 @@ import com.example.myApp.dto.ReviewResponse;
 import com.example.myApp.enity.Products;
 import com.example.myApp.enity.Review;
 import com.example.myApp.enity.User;
+import com.example.myApp.repository.OrderDetailRepository;
 import com.example.myApp.repository.ProductRepository;
 import com.example.myApp.repository.ReviewRepository;
 import com.example.myApp.repository.UserRepository;
@@ -22,6 +23,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
     @Override
     public Review addReview(String email, ReviewRequest reviewRequest) {
@@ -29,7 +31,10 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Products products = productRepository.findById(reviewRequest.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-
+        int count = orderDetailRepository.countPurchasedProduct(user.getId(), products.getId());
+        if (count == 0) {
+            throw new RuntimeException("Bạn chỉ có thể đánh giá sản phẩm khi đã mua hàng.");
+        }
         if (reviewRequest.getRating() < 1 || reviewRequest.getRating() > 5) {
             throw new RuntimeException("Rating must be between 1 and 5");
         }
