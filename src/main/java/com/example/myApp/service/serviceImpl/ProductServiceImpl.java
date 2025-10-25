@@ -42,6 +42,12 @@ public class ProductServiceImpl implements ProductService {
     private CloudinaryService cloudinaryService;
 
     @Override
+    public Page<Products> getAllProductsActive(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        return productRepository.findAllActive(pageable);
+    }
+
+    @Override
     public Page<Products> getAllProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
         return productRepository.findAll(pageable);
@@ -108,10 +114,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(int id){
-        Products products = productRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Product not found"));
-        productRepository.delete(products);
+    public void deleteProduct(int id){;
+        productRepository.deleteProduct(id);
+    }
+
+    @Override
+    public void restoreProduct(int id){
+        productRepository.restoreProduct(id);
     }
 
     @Override

@@ -2,9 +2,11 @@ package com.example.myApp.repository;
 
 import com.example.myApp.enity.Category;
 import com.example.myApp.enity.Products;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,9 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
             nativeQuery = true)
     Page<Products> searchProductsByName(String name, Pageable pageable);
 
+    @Query("SELECT p FROM Products p WHERE p.isActive = true")
+    Page<Products> findAllActive(Pageable pageable);
+
     Optional<Products> findByName(String name);
 
     @Query("SELECT p FROM Products p WHERE " +
@@ -33,4 +38,14 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
                                  @Param("maxPrice") BigDecimal maxPrice,
                                  @Param("color") String color,
                                  @Param("genderTarget") String genderTarget);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Products p SET p.isActive = false WHERE p.id = :id")
+    void deleteProduct(@Param("id") int id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Products p SET p.isActive = true WHERE p.id = :id")
+    void restoreProduct(@Param("id") int id);
 }

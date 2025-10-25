@@ -47,6 +47,9 @@ public class Products {
     @Column(name = "gender_target")
     private String genderTarget;
 
+    @Column(name = "is_active")
+    private boolean isActive;
+
     public void updateFromDTO(ProductDTO productDTO,
                               CategoryRepository categoryRepository) {
         this.name = productDTO.getName();

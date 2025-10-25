@@ -76,8 +76,8 @@ public class OrderController {
                                                 @RequestParam OrderStatus newStatus,
                                                 HttpServletRequest request) {
         try {
-            Integer userId = (Integer) request.getAttribute("userId");
-            if (userId == null || userId != 2) {
+            Integer roleId = (Integer) request.getAttribute("roleId");
+            if (roleId == null || roleId != 2) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
             }
             String email = (String) request.getAttribute("email");
@@ -92,8 +92,8 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<?> getOrdersByStatus(@RequestParam OrderStatus status,
                                                          HttpServletRequest request) {
-        Integer userId = (Integer) request.getAttribute("userId");
-        if (userId == null || userId != 2) {
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (roleId == null || roleId != 2) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
         }
         List<Order> orders = orderService.findOrderByStatus(status);
@@ -102,8 +102,8 @@ public class OrderController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllOrders(HttpServletRequest request) {
-        Integer userId = (Integer) request.getAttribute("userId");
-        if (userId == null || userId != 2) {
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (roleId == null || roleId != 2) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
         }
         List<Order> orders = orderRepository.findAll();

@@ -32,6 +32,22 @@ public class ProductController {
     @Autowired
     private CategoryRepository categoryRepository;
     //Lay tat ca san pham
+    @GetMapping("/getAllActive")
+    public ResponseEntity<PageResponse<Products>> getAllProductsActive(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size){
+        Page<Products> productPage = productService.getAllProductsActive(page, size);
+
+        PageResponse<Products> response = new PageResponse<>();
+        response.setContent(productPage.getContent());
+        response.setPageNumber(productPage.getNumber());
+        response.setPageSize(productPage.getSize());
+        response.setTotalElements(productPage.getTotalElements());
+        response.setTotalPages(productPage.getTotalPages());
+        response.setLast(productPage.isLast());
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/getAll")
     public ResponseEntity<PageResponse<Products>> getAllProducts(@RequestParam(defaultValue = "0") int page,
                                                                  @RequestParam(defaultValue = "10") int size){
@@ -93,8 +109,8 @@ public class ProductController {
             @PathVariable int id,
             @RequestBody ProductDTO productDTO,
             HttpServletRequest request){
-        Integer userId = (Integer) request.getAttribute("userId");
-        if (userId == null || userId != 2) {
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (roleId == null || roleId != 2) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
         }
         Products products = productRepository.findById(id).orElseThrow(
@@ -104,15 +120,26 @@ public class ProductController {
         return ResponseEntity.ok("Update success");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<String> deleteProducts(@PathVariable int id,
                                                  HttpServletRequest request){
-        Integer userId = (Integer) request.getAttribute("userId");
-        if (userId == null || userId != 2) {
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (roleId == null || roleId != 2) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
         }
         productService.deleteProduct(id);
         return ResponseEntity.ok("Delete success");
+    }
+
+    @PostMapping("/restore/{id}")
+    public ResponseEntity<String> restoreProducts(@PathVariable int id,
+                                                 HttpServletRequest request){
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (roleId == null || roleId != 2) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+        }
+        productService.restoreProduct(id);
+        return ResponseEntity.ok("Restore success");
     }
 
     @GetMapping("/{productId}/available")

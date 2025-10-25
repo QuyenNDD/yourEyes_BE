@@ -11,11 +11,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {
+    Page<Products> getAllProductsActive(int page, int size);
     Page<Products> getAllProducts(int page, int size);
     ProductResponse getProductById(int id);
     Page<Products> searchProductByName(String name, int page, int size);
     Products addProducts(ProductDTO productDTO, List<MultipartFile> s);
     void deleteProduct(int id);
+    void restoreProduct(int id);
     ProductAvailableResponse checkProductAvailable(int id);
     List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color, String genderTarget);
 }

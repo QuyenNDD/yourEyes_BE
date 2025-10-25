@@ -20,11 +20,11 @@ public class StockImportController {
     @PostMapping("/import")
     public ResponseEntity<?> importStock(@RequestBody StockImportRequest stockImportRequest, HttpServletRequest request){
         try {
-            Integer userId = (Integer) request.getAttribute("userId");
+            Integer roleId = (Integer) request.getAttribute("roleId");
             String employeeEmail = (String) request.getAttribute("email");
             if (employeeEmail == null){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vui lòng đăng nhập");
-            }else if (userId == null || userId != 2 || userId != 3) {
+            }else if (roleId == null || roleId != 2 || roleId != 3) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
             }
             stockImportService.importStock(employeeEmail, stockImportRequest);
