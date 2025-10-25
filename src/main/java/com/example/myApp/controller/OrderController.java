@@ -52,9 +52,15 @@ public class OrderController {
     @PostMapping("/place")
     public ResponseEntity<?> placeOrder(@RequestBody PlaceOrderRequest placeOrderRequest,
                                         HttpServletRequest request) {
-        String userEmail = (String) request.getAttribute("email");
-        OrderResponse response = orderService.placeOrder(userEmail, placeOrderRequest.getDiscountCode(), placeOrderRequest.getCartItemIds());
-        return ResponseEntity.ok(response);
+        try {
+            String userEmail = (String) request.getAttribute("email");
+            OrderResponse response = orderService.placeOrder(userEmail, placeOrderRequest.getDiscountCode(), placeOrderRequest.getItems());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/history")
