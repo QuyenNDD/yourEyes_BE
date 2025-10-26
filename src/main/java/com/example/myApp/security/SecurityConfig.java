@@ -33,12 +33,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // ✅ Không còn deprecated
+                .cors(cors -> {}) // ✅ Bật CORS để Spring Security không chặn
+                .csrf(AbstractHttpConfigurer::disable) // ✅ Tắt CSRF vì API REST không dùng cookie form
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
