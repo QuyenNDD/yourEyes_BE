@@ -1,5 +1,6 @@
 package com.example.myApp.service;
 
+import com.example.myApp.dto.request.ProductUpdateRequest;
 import com.example.myApp.dto.response.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
 import com.example.myApp.dto.response.ProductResponse;
@@ -20,5 +21,6 @@ public interface ProductService {
     void restoreProduct(int id);
     ProductAvailableResponse checkProductAvailable(int id);
     List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color, String genderTarget);
+    void updateProduct(ProductUpdateRequest updateRequest, Products products);
 }
 

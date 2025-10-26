@@ -23,5 +23,8 @@ public class ProductDTO {
         this.description = productDTO.getDescription();
         this.price = productDTO.getPrice();
         this.category = productDTO.getCategory();
+        this.size = productDTO.getSize();
+        this.color = productDTO.getColor();
+        this.genderTarget = productDTO.getGenderTarget();
     }
 }

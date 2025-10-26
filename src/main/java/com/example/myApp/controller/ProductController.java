@@ -1,5 +1,6 @@
 package com.example.myApp.controller;
 
+import com.example.myApp.dto.request.ProductUpdateRequest;
 import com.example.myApp.dto.response.PageResponse;
 import com.example.myApp.dto.response.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
@@ -104,20 +105,25 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateProducts(
             @PathVariable int id,
-            @RequestBody ProductDTO productDTO,
+            @ModelAttribute ProductUpdateRequest updateRequest,
             HttpServletRequest request){
-        Integer roleId = (Integer) request.getAttribute("roleId");
-        if (roleId == null || roleId != 2) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+        try {
+            Integer roleId = (Integer) request.getAttribute("roleId");
+            if (roleId == null || roleId != 2) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+            }
+            Products products = productRepository.findById(id).orElseThrow(
+                    () -> new RuntimeException("Not found product with id = " + id));
+            productService.updateProduct(updateRequest, products);
+            return ResponseEntity.ok("Update success");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
         }
-        Products products = productRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Not found product with id = " + id));
-        products.updateFromDTO(productDTO, categoryRepository);
-        productRepository.save(products);
-        return ResponseEntity.ok("Update success");
+
     }
 
     @PostMapping("/delete/{id}")

@@ -1,5 +1,6 @@
 package com.example.myApp.service.serviceImpl;
 
+import com.example.myApp.dto.request.ProductUpdateRequest;
 import com.example.myApp.dto.response.ProductAvailableResponse;
 import com.example.myApp.dto.ProductDTO;
 import com.example.myApp.dto.response.ProductResponse;
@@ -24,6 +25,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -133,5 +135,40 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color, String genderTarget) {
         return productRepository.findByFilters(categoryId, minPrice, maxPrice, color, genderTarget);
+    }
+
+    @Override
+    public void updateProduct(ProductUpdateRequest updateRequest, Products products) {
+        try {
+            products.setName(updateRequest.getProductDTO().getName());
+            products.setDescription(updateRequest.getProductDTO().getDescription());
+            products.setPrice(updateRequest.getProductDTO().getPrice());
+            products.setCategory(categoryRepository.findByName(updateRequest.getProductDTO().getCategory())
+                    .orElseThrow(() -> new RuntimeException("Category not found")));
+            products.setSize(updateRequest.getProductDTO().getSize());
+            products.setColor(updateRequest.getProductDTO().getColor());
+            products.setGenderTarget(updateRequest.getProductDTO().getGenderTarget());
+
+            List<String> imagesUrl = new ArrayList<>();
+            if (updateRequest.getImageUrl() != null && !updateRequest.getImageUrl().isEmpty()) {
+                imagesUrl.addAll(Arrays.asList(updateRequest.getImageUrl().split(";")));
+            }
+
+            if (updateRequest.getNewImages() != null) {
+                for (MultipartFile file : updateRequest.getNewImages()) {
+                    if (!file.isEmpty()){
+                        String uploadUrl = cloudinaryService.upload(file);
+                        imagesUrl.add(uploadUrl);
+                    }
+                }
+            }
+
+            products.setImageUrl(String.join(";", imagesUrl));
+
+            productRepository.save(products);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi sửa sản phẩm: " + e.getMessage(), e);
+        }
+
     }
 }

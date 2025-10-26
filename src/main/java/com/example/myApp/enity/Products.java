@@ -60,5 +60,8 @@ public class Products {
         // Tìm category theo tên và cập nhật
         this.category = categoryRepository.findByName(productDTO.getCategory())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
+        this.size = productDTO.getSize();
+        this.color = productDTO.getColor();
+        this.genderTarget = productDTO.getGenderTarget();
     }
 }
