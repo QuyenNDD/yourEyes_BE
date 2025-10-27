@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
                 .phone(request.getPhone())
                 .address(request.getAddress())
                 .role(1) // 2 là admin, 1 là user, 3 là employee
+                .isActive(true)
                 .build();
         userRepository.save(user);
     }

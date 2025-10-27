@@ -44,7 +44,7 @@ public class Order {
     private BigDecimal finalPrice;
 
     @Column(name = "isPaid")
-    private boolean isPaid;
+    private Boolean isPaid;
 
     @Column(name = "paidAt")
     private LocalDateTime paidAt;

@@ -81,11 +81,18 @@ public class ProductController {
 
     // Tim kiem san pham theo ten ( gan giong )
     @GetMapping("/search")
-    public ResponseEntity<Page<Products>> searchProducts(@RequestParam String name,
+    public ResponseEntity<PageResponse<Products>> searchProducts(@RequestParam String name,
                                                          @RequestParam(defaultValue = "0") int page,
                                                          @RequestParam(defaultValue = "10") int size){
-        Page<Products> products = productService.searchProductByName(name, page, size);
-        return ResponseEntity.ok(products);
+        Page<Products> productPage = productService.searchProductByName(name, page, size);
+        PageResponse<Products> response = new PageResponse<>();
+        response.setContent(productPage.getContent());
+        response.setPageNumber(productPage.getNumber());
+        response.setPageSize(productPage.getSize());
+        response.setTotalElements(productPage.getTotalElements());
+        response.setTotalPages(productPage.getTotalPages());
+        response.setLast(productPage.isLast());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -149,9 +156,15 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}/available")
-    public ResponseEntity<ProductAvailableResponse> checkProductAvailable(@PathVariable int productId){
-        ProductAvailableResponse productAvailableResponse = productService.checkProductAvailable(productId);
+    public ResponseEntity<?> checkProductAvailable(@PathVariable int productId){
+        try {
+            ProductAvailableResponse productAvailableResponse = productService.checkProductAvailable(productId);
         return ResponseEntity.ok(productAvailableResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/filter")

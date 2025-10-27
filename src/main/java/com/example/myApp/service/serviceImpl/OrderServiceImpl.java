@@ -173,9 +173,6 @@ public class OrderServiceImpl implements OrderService {
     public Order updateOrderStatus(int id, OrderStatus newStatus, String email){
         User employee = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
-//        if (!employee.getRole().equals("EMPLOYEE") && !employee.getRole().equals("ADMIN")) {
-//            throw new RuntimeException("Employee does not have permission to update status");
-//        }
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         OrderStatus currentStatus = order.getStatus();
@@ -183,7 +180,6 @@ public class OrderServiceImpl implements OrderService {
         if (!isValidTransition(currentStatus, newStatus)) {
             throw new IllegalStateException("Không thể chuyển từ " + currentStatus + " sang " + newStatus);
         }
-
         order.setStatus(newStatus);
         return orderRepository.save(order);
     }

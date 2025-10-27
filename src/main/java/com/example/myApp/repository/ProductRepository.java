@@ -17,8 +17,8 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Products, Integer> {
-    @Query(value = "SELECT * FROM products WHERE name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', ?1, '%')",
-            countQuery = "SELECT COUNT(*) FROM products WHERE name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', ?1, '%')",
+    @Query(value = "SELECT * FROM Products p WHERE p.name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', ?1, '%')",
+            countQuery = "SELECT COUNT(*) FROM Products WHERE p.name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', ?1, '%')",
             nativeQuery = true)
     Page<Products> searchProductsByName(String name, Pageable pageable);
 
