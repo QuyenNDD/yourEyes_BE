@@ -42,6 +42,8 @@ public class ProductServiceImpl implements ProductService {
     private UserRepository userRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private SearchHistoryRepository searchHistoryRepository;
 
     @Override
     public Page<Products> getAllProductsActive(int page, int size) {
@@ -73,8 +75,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Products> searchProductByName(String name, int page, int size){
+    public Page<Products> searchProductByName(String name, int page, int size, Integer userId){
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        if (userId != null) {
+            userRepository.findById(userId).ifPresent(user -> {
+                SearchHistory history = SearchHistory.builder()
+                        .user(user)
+                        .searchText(name)
+                        .searchTime(LocalDateTime.now())
+                        .build();
+                searchHistoryRepository.save(history);
+            });
+        }
         return productRepository.searchProductsByName(name, pageable);
     }
 

@@ -82,9 +82,11 @@ public class ProductController {
     // Tim kiem san pham theo ten ( gan giong )
     @GetMapping("/search")
     public ResponseEntity<PageResponse<Products>> searchProducts(@RequestParam String name,
-                                                         @RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "10") int size){
-        Page<Products> productPage = productService.searchProductByName(name, page, size);
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size,
+                                                                 HttpServletRequest request){
+        Integer userId = (Integer) request.getAttribute("userId");
+        Page<Products> productPage = productService.searchProductByName(name, page, size, userId);
         PageResponse<Products> response = new PageResponse<>();
         response.setContent(productPage.getContent());
         response.setPageNumber(productPage.getNumber());

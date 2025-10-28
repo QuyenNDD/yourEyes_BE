@@ -15,7 +15,7 @@ public interface ProductService {
     Page<Products> getAllProductsActive(int page, int size);
     Page<Products> getAllProducts(int page, int size);
     ProductResponse getProductById(int id);
-    Page<Products> searchProductByName(String name, int page, int size);
+    Page<Products> searchProductByName(String name, int page, int size, Integer userId);
     Products addProducts(ProductDTO productDTO, List<MultipartFile> s);
     void deleteProduct(int id);
     void restoreProduct(int id);
