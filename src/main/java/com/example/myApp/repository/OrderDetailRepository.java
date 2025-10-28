@@ -21,5 +21,5 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
           AND od.order.status = 'COMPLETED'
     """)
     int countPurchasedProduct(@Param("userId") Integer userId,
-                               @Param("productId") Integer productId);
+                              @Param("productId") Integer productId);
 }
