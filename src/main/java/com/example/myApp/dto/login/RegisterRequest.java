@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class RegisterRequest {
     @NotBlank(message = "Họ và tên không được để trống")
@@ -23,4 +25,10 @@ public class RegisterRequest {
 
     @NotBlank(message = "Địa chỉ không được để trống")
     private String address;
+
+    private String gender;
+    private int age;
+    private BigDecimal height;
+    private BigDecimal weight;
+    private String stylePreference;
 }

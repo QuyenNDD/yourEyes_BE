@@ -5,6 +5,8 @@ import com.example.myApp.dto.request.UserUpdateRequest;
 import com.example.myApp.dto.login.RegisterRequest;
 import com.example.myApp.dto.login.UserDTO;
 import com.example.myApp.enity.User;
+import com.example.myApp.enity.UserProfile;
+import com.example.myApp.repository.UserProfileRepository;
 import com.example.myApp.repository.UserRepository;
 import com.example.myApp.security.JwtTokenProvider;
 import com.example.myApp.service.UserService;
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder  bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserProfileRepository userProfileRepository;
 
     @Override
     public Optional<User> loginEmail(String email, String password){
@@ -49,6 +52,16 @@ public class UserServiceImpl implements UserService {
                 .isActive(true)
                 .build();
         userRepository.save(user);
+
+        UserProfile userProfile = UserProfile.builder()
+                .user(user)
+                .gender(request.getGender())
+                .age(request.getAge())
+                .height(request.getHeight())
+                .weight(request.getWeight())
+                .stylePreference(request.getStylePreference())
+                .build();
+        userProfileRepository.save(userProfile);
     }
 
     @Override
