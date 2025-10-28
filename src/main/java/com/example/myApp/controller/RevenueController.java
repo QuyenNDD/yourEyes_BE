@@ -1,6 +1,8 @@
 package com.example.myApp.controller;
 
 import com.example.myApp.dto.response.CategoryMonthMoney;
+import com.example.myApp.dto.response.CategoryYearMoney;
+import com.example.myApp.dto.response.MonthlyOrderStatus;
 import com.example.myApp.service.RevenueService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,28 @@ public class RevenueController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
         }
         List<CategoryMonthMoney> data = revenueService.getRevenueCategoryByMonthAndYear(month, year);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/categoryYearMoney")
+    public ResponseEntity<?> getCategoryYearMoney(@RequestParam int year,
+                                                  HttpServletRequest request) {
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (roleId != 2 || roleId == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+        }
+        List<CategoryYearMoney> data = revenueService.getRevenueCategoryByYear(year);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/monthlyOrderStatus")
+    public ResponseEntity<?> getMonthlyOrderStatus(@RequestParam int year,
+                                                  HttpServletRequest request) {
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (roleId != 2 || roleId == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
+        }
+        List<MonthlyOrderStatus> data = revenueService.getMonthlyOrderStatus(year);
         return ResponseEntity.ok(data);
     }
 }
