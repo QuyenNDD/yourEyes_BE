@@ -31,6 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private DiscountRepository discountRepository;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+    @Autowired
+    private UserProductActivityRepository userProductActivityRepository;
 
 
     @Override
@@ -106,7 +108,14 @@ public class OrderServiceImpl implements OrderService {
                     .createdAt(LocalDateTime.now())
                     .build();
             orderDetailRepository.save(orderDetail);
-            // Xóa luôn cartItem đã đặt hàng
+
+            UserProductActivity userProductActivity = UserProductActivity.builder()
+                    .user(user)
+                    .products(product)
+                    .actionType("ORDER")
+                    .actionTime(LocalDateTime.now())
+                    .build();
+            userProductActivityRepository.save(userProductActivity);
             cartRepository.delete(cartItem);
         }
 

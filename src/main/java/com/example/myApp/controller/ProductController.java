@@ -8,6 +8,7 @@ import com.example.myApp.dto.response.ProductResponse;
 import com.example.myApp.enity.Products;
 import com.example.myApp.repository.CategoryRepository;
 import com.example.myApp.repository.ProductRepository;
+import com.example.myApp.service.UserProductActivityService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,9 @@ public class ProductController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private UserProductActivityService userProductActivityService;
     //Lay tat ca san pham
     @GetMapping("/getAllActive")
     public ResponseEntity<PageResponse<Products>> getAllProductsActive(@RequestParam(defaultValue = "0") int page,
@@ -66,12 +70,14 @@ public class ProductController {
     }
     // Lay san pham bang Id
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable int id){
+    public ResponseEntity<?> getProductById(@PathVariable int id, HttpServletRequest request){
         try{
+            Integer userId = (Integer) request.getAttribute("userId");
             ProductResponse products = productService.getProductById(id);
             if (products == null){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm");
             }
+            userProductActivityService.logActivity(userId, id, "VIEW_DETAIL");
             return ResponseEntity.ok(products);
         }catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
