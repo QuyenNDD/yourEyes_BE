@@ -85,7 +85,6 @@ public class ProductServiceImpl implements ProductService {
             Category category = categoryRepository.findByName(productDTO.getCategory())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
 
-            // Tạo thư mục uploads nếu chưa có
 
             // Tạo đối tượng Products
             Products products = Products.builder()
@@ -98,6 +97,7 @@ public class ProductServiceImpl implements ProductService {
                     .color(productDTO.getColor())
                     .genderTarget(productDTO.getGenderTarget())
                     .createdAt(LocalDateTime.now())
+                    .isActive(true)
                     .build();
 
             if (images != null && !images.isEmpty()) {
