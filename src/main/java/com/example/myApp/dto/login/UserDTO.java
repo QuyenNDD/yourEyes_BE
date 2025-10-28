@@ -14,14 +14,16 @@ public class UserDTO {
     private final String address;
     private final Integer role;
     private final int id;
+    private final boolean isActive;
 
-    public UserDTO(String fullname, String email, String phone, String address, Integer role, int id) {
+    public UserDTO(String fullname, String email, String phone, String address, Integer role, int id, boolean isActive) {
         this.fullname = fullname;
         this.email = email;
         this.phone = phone;
         this.address = address;
         this.role = role;
         this.id = id;
+        this.isActive = isActive;
     }
 
     public UserDTO(User user) {
@@ -31,6 +33,6 @@ public class UserDTO {
         this.id = user.getId();
         this.phone = user.getPhone();
         this.address = user.getAddress();
+        this.isActive = user.isActive();
     }
-
 }
