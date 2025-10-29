@@ -30,16 +30,15 @@ public interface RevenueRepository extends JpaRepository<Order, Integer> {
 
     @Query(value = """
                 SELECT
-                    c.name AS category_name,
-                    YEAR(o.created_at) AS year,
-                    SUM(od.price * od.quantity) AS total_revenue
-                FROM orders o
-                JOIN order_details od ON o.id = od.order_id
-                JOIN products p ON od.product_id = p.id
-                JOIN categories c ON p.category_id = c.id
-                WHERE o.status = 'COMPLETED'
-                GROUP BY c.name, YEAR(o.created_at)
-                ORDER BY YEAR(o.created_at), c.name;
+                                    c.name AS category_name,
+                                    SUM(od.price * od.quantity) AS total_revenue
+                                FROM orders o
+                                JOIN order_details od ON o.id = od.order_id
+                                JOIN products p ON od.product_id = p.id
+                                JOIN categories c ON p.category_id = c.id
+                                WHERE o.status = 'COMPLETED' and YEAR(o.created_at) = :year
+                                GROUP BY c.name
+                                ORDER BY c.name;
             """, nativeQuery = true)
     List<Object[]> getCategoryYearMoney(@Param("year") int year);
 

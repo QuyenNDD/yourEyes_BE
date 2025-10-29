@@ -36,8 +36,7 @@ public class RevenueServiceImpl implements RevenueService {
         for (Object[] row : results) {
             CategoryYearMoney categoryYearMoney = new CategoryYearMoney();
             categoryYearMoney.setCategoryName((String) row[0]);
-            categoryYearMoney.setYear((Integer) row[1]);
-            categoryYearMoney.setTotalMoney((BigDecimal) row[2]);
+            categoryYearMoney.setTotalMoney((BigDecimal) row[1]);
             list.add(categoryYearMoney);
         }
         return list;

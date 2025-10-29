@@ -7,6 +7,5 @@ import java.math.BigDecimal;
 @Data
 public class CategoryYearMoney {
     private String categoryName;
-    private int year;
     private BigDecimal totalMoney;
 }
