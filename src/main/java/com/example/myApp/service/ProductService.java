@@ -22,5 +22,6 @@ public interface ProductService {
     ProductAvailableResponse checkProductAvailable(int id);
     List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color, String genderTarget);
     void updateProduct(ProductUpdateRequest updateRequest, Products products);
+    List<Products> recommendationProducts(Integer userId);
 }
 

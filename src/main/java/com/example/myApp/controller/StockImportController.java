@@ -24,7 +24,7 @@ public class StockImportController {
             String employeeEmail = (String) request.getAttribute("email");
             if (employeeEmail == null){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vui lòng đăng nhập");
-            }else if (roleId == null || roleId != 2 || roleId != 3) {
+            }else if (roleId == null || roleId == 1) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bạn không có quyền");
             }
             stockImportService.importStock(employeeEmail, stockImportRequest);

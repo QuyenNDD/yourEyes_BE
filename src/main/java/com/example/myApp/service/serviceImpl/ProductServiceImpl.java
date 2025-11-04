@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -44,6 +45,10 @@ public class ProductServiceImpl implements ProductService {
     private CloudinaryService cloudinaryService;
     @Autowired
     private SearchHistoryRepository searchHistoryRepository;
+    @Autowired
+    private UserProfileRepository userProfileRepository;
+
+    private static final int RECOMMENDATION_LIMIT = 20;
 
     @Override
     public Page<Products> getAllProductsActive(int page, int size) {
@@ -147,6 +152,41 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Products> filterProducts(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color, String genderTarget) {
         return productRepository.findByFilters(categoryId, minPrice, maxPrice, color, genderTarget);
+    }
+
+    @Override
+    public List<Products> recommendationProducts(Integer userId) {
+        List<Products> warmRecs = productRepository.recommendationProducts(userId); // (Query này của bạn đã trả về List<Products>)
+
+        if (!warmRecs.isEmpty()) {
+            System.out.println("AI: [Warm Start] Trả về gợi ý K-NN cho user " + userId);
+
+            // Bỏ qua bước chuyển đổi DTO
+            return warmRecs.stream()
+                    .limit(RECOMMENDATION_LIMIT)
+                    .collect(Collectors.toList()); // <-- Trả về List<Products>
+        }
+
+        // 2. LUỒNG 2: "COLD START" (Người dùng mới)
+        UserProfile profile = userProfileRepository.findByUserId(userId) // (Giả sử bạn có hàm này)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy profile của user: " + userId));
+
+        Integer clusterId = profile.getClusterId();
+
+        if (clusterId == null || clusterId == -1) {
+            System.err.println("AI: [Cold Start] User " + userId + " không có Cụm (Cluster).");
+            return List.of(); // Trả về danh sách rỗng
+        }
+
+        // 3. Chạy Query "Dự phòng" (Fallback)
+        System.out.println("AI: [Cold Start] User " + userId + " thuộc Cụm " + clusterId + ". Đang chạy query dự phòng...");
+
+        List<Products> coldRecs = productRepository.findBestSellersForCluster(
+                clusterId,
+                PageRequest.of(0, RECOMMENDATION_LIMIT)
+        );
+
+        return coldRecs; // <-- Trả về List<Products>
     }
 
     @Override

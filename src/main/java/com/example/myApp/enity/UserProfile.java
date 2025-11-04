@@ -37,4 +37,6 @@ public class UserProfile {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
+    @Column(name = "cluster_id")
+    private Integer clusterId;
 }

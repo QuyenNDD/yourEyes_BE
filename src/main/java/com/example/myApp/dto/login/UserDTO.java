@@ -29,7 +29,7 @@ public class UserDTO {
     public UserDTO(User user) {
         this.fullname = user.getFullname();
         this.email = user.getEmail();
-        this.role = user.getRole() == 0 ? user.getRole() : 2;
+        this.role = user.getRole();
         this.id = user.getId();
         this.phone = user.getPhone();
         this.address = user.getAddress();

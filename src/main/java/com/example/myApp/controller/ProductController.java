@@ -103,6 +103,21 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/recommendation")
+    public ResponseEntity<?> recommendationProducts(HttpServletRequest request){
+        try {
+            Integer userId = (Integer) request.getAttribute("userId");
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+            }
+            List<Products> products = productService.recommendationProducts(userId);
+            return ResponseEntity.ok(products);
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addProducts(@ModelAttribute ProductDTO productDTO,
                                          @RequestParam(value = "images", required = false) List<MultipartFile> images,

@@ -48,4 +48,24 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
     @Transactional
     @Query("UPDATE Products p SET p.isActive = true WHERE p.id = :id")
     void restoreProduct(@Param("id") int id);
+
+    @Query("""
+            SELECT r.products
+                    FROM Recommendation r
+                    WHERE r.user.id = :userId AND r.products.isActive = true
+                    ORDER BY r.score DESC
+            """)
+    List<Products> recommendationProducts(@Param("userId") Integer userId);
+
+    @Query("""
+            SELECT p
+                    FROM UserProductActivity upa
+                    JOIN upa.products p
+                    JOIN upa.user u
+                    JOIN UserProfile up ON up.user.id = u.id
+                    WHERE up.clusterId = :clusterId AND upa.actionType = 'ORDER' AND p.isActive = true
+                    GROUP BY p
+                    ORDER BY COUNT(upa.id) DESC
+            """)
+    List<Products> findBestSellersForCluster(@Param("clusterId") Integer clusterId, Pageable pageable);
 }
