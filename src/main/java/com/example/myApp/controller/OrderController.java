@@ -71,11 +71,16 @@ public class OrderController {
     }
 
     @GetMapping("history/{orderId}")
-    public ResponseEntity<OrderDetailResponse> getOrderHistoryByOrderId(@PathVariable int orderId
+    public ResponseEntity<?> getOrderHistoryByOrderId(@PathVariable int orderId
                                                     ,HttpServletRequest request){
-        String email = (String) request.getAttribute("email");;
-        OrderDetailResponse orderDetailResponse = orderService.getOrderDetail(orderId,email);
-        return ResponseEntity.ok(orderDetailResponse);
+        try {
+            String email = (String) request.getAttribute("email");;
+            OrderDetailResponse orderDetailResponse = orderService.getOrderDetail(orderId,email);
+            return ResponseEntity.ok(orderDetailResponse);
+        }catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
     }
     @PutMapping("/{orderId}/status")
     public ResponseEntity<?> updateOrderStatus(@PathVariable int orderId,

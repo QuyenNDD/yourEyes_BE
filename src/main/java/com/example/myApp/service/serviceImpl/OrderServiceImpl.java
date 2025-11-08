@@ -162,8 +162,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
            .orElseThrow(() -> new RuntimeException("Order không tồn tại!"));
 
-        if (!order.getUser().equals(user)) {
-            throw new RuntimeException("Bạn không có quyền xem đơn hàng này!");
+        if (user.getRole() != 2){
+            if (!order.getUser().equals(user)) {
+                throw new RuntimeException("Bạn không có quyền xem đơn hàng này!");
+            }
         }
 
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
