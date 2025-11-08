@@ -19,7 +19,7 @@ public class RecommendationJobService {
         try {
             // Đường dẫn TUYỆT ĐỐI đến Python và script của bạn
             String pythonExecutable = "C:/Users/ASUS/AppData/Local/Programs/Python/Python312/python.exe";
-            String scriptPath = "E:/project/youreyes/BE/run_production_hybrid.py";
+            String scriptPath = "E:/project/youreyes/BE/myApp/intelligent/run_production_hybrid.py";
 
             ProcessBuilder pb = new ProcessBuilder(pythonExecutable, scriptPath);
             pb.environment().put("PYTHONIOENCODING", "UTF-8");
